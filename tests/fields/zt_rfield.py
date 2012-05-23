@@ -1,7 +1,8 @@
 #coding: utf8
 
-from model import *
+from fields.rfield import rfield
 from redis.client import Redis
+from rmodel import RModel
 from unittest.case import TestCase
 
 class TModel(RModel):

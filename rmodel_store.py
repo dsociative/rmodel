@@ -1,8 +1,8 @@
 # coding: utf8
 
+from api.RApi import RApi
+from cursor import Cursor
 from rmodel import RModel
-from model.cursor import Cursor
-from model.api.RApi import RApi
 
 
 class RModelStore(RModel):

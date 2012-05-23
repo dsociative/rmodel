@@ -1,8 +1,11 @@
 #coding: utf8
-from model import RModel, rfield
-from model.fields.rlist import rlist
+
+from fields.rfield import rfield
+from fields.rlist import rlist
 from redis.client import Redis
+from rmodel import RModel
 from unittest.case import TestCase
+
 
 class TestModel(RModel):
 
@@ -10,6 +13,7 @@ class TestModel(RModel):
 
     id = rfield(int)
     names = rlist()
+
 
 class Test(TestCase):
 

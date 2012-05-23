@@ -1,6 +1,7 @@
 # coding: utf8
 
-from model.fields.base_bound import BaseBound
+from fields.base_bound import BaseBound
+
 
 class rlist(BaseBound):
     '''

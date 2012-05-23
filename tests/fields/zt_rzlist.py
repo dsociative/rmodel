@@ -1,9 +1,10 @@
 #coding: utf8
-from model import RModel, rfield
-from model.cursor import Cursor
-from model.fields.rzlist import rzlist
+from fields.rfield import rfield
+from fields.rzlist import rzlist
 from redis.client import Redis
+from rmodel import RModel
 from unittest.case import TestCase
+
 
 class TestModel(RModel):
     prefix = 'testmodel'

@@ -1,6 +1,10 @@
 # coding: utf8
-from model import *
+
+from fields.rfield import rfield
+from fields.rhash import rhash
 from redis.client import Redis
+from rmodel import RModel
+from rmodel_store import RModelStore
 from unittest.case import TestCase
 
 
