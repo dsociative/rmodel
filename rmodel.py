@@ -33,9 +33,6 @@ class RModel(object):
     redis = Redis()
     prefix = ''
 
-    def inherit(self, inst):
-        self.instance = inst
-
     def __init__(self, cursor=Cursor(), prefix=None, inst=None):
         if prefix is not None:
             self.prefix = str(prefix)
@@ -47,7 +44,7 @@ class RModel(object):
             rt[name] = field
         self._fields = rt
 
-        self.inherit(inst)
+        self.instance = inst
 
     def move(self, cursor):
         if self.redis.exists(self.cursor.key):

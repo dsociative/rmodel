@@ -17,10 +17,8 @@ class RModelStore(RModel):
         return self.api_engine(self, query)
 
     def __init__(self, cursor=Cursor(), prefix=None, inst=None):
-        RModel.__init__(self, cursor=cursor, prefix=prefix)
+        RModel.__init__(self, cursor=cursor, prefix=prefix, inst=inst)
         self._key_cursor = self.cursor.new(self.KEY)
-
-        self.inherit(inst)
 
     def iskey(self, value):
         return value == self.KEY
