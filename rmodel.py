@@ -2,11 +2,14 @@
 from cursor import Cursor
 from redis.client import Redis
 
+
 def ismodel(field):
     return hasattr(field, 'model')
 
+
 def isfield(field):
     return hasattr(field, 'redis_field')
+
 
 class MetaModel(type):
 
