@@ -1,7 +1,5 @@
 # coding: utf8
 
-def nullfunct(self, inst, data):
-    return data
 
 class RProperty(object):
 

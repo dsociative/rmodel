@@ -7,8 +7,10 @@ from fields.unbound import Unbound
 def onload(self, inst, field, data):
     return data
 
+
 def onsave(self, inst, field, data):
     return data
+
 
 class BaseBound(RProperty):
     '''

@@ -1,6 +1,7 @@
 # coding: utf8
 
 from api.RApi import RApi
+from common import ProxyRun
 from cursor import Cursor
 from rmodel import RModel
 
@@ -20,9 +21,6 @@ class RModelStore(RModel):
         self._key_cursor = self.cursor.new(self.KEY)
 
         self.inherit(inst)
-
-    def delete_key(self, prefix):
-        return self.redis.hdel(self._key_cursor.key, prefix)
 
     def iskey(self, value):
         return value == self.KEY
@@ -68,6 +66,7 @@ class RModelStore(RModel):
         self.set(end)
         self.redis.rename(self.cursor.new(start).key, self.cursor.new(end).key)
 
+    @ProxyRun('init')
     def create_model(self, prefix):
         return self.assign(self.cursor, prefix=prefix, inst=self.instance)
 
@@ -79,12 +78,16 @@ class RModelStore(RModel):
         if self.exist(prefix):
             return self.create_model(prefix)
 
+    @ProxyRun('new')
     def set(self, prefix):
         self.redis.hset(self._key_cursor.key, prefix, self.KEY)
         return self.create_model(prefix)
 
     def new_key(self):
         return self.redis.hincrby(self._key_cursor.key, self.INCR_KEY)
+
+    def delete_key(self, prefix):
+        return self.redis.hdel(self._key_cursor.key, prefix)
 
     def remove_item(self, prefix):
         item = self.get(prefix)

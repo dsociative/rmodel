@@ -1,6 +1,6 @@
 # coding: utf8
 
-from model.Cursor import Cursor
+from cursor import Cursor
 from unittest.case import TestCase
 
 class CursorTest(TestCase):

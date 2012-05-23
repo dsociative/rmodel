@@ -139,3 +139,10 @@ class RModel(object):
         if not section.get(key):
             section.remove(key)
 
+    def new(self):
+        pass
+
+    def init(self):
+        pass
+
+
