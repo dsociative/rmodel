@@ -1,7 +1,6 @@
 # coding: utf8
 
 from common import ProxyRun
-from cursor import Cursor
 from rmodel import RModel
 
 
@@ -10,17 +9,11 @@ class RModelStore(RModel):
     KEY = '_KEY'
     INCR_KEY = '_INCR'
 
-    def api(self, query):
-        return self.api_engine(self, query)
-
     def init(self):
         self._key_cursor = self.cursor.new(self.KEY)
 
-    def iskey(self, value):
-        return value == self.KEY
-
     def __contains__(self, prefix):
-        return self.exist(prefix)
+        return self.redis.hexists(self._key_cursor.key, prefix)
 
     def __len__(self):
         if self.redis.hexists(self._key_cursor.key, self.INCR_KEY):
@@ -28,9 +21,6 @@ class RModelStore(RModel):
         else:
             shift = 0
         return self.redis.hlen(self._key_cursor.key) - shift
-
-    def exist(self, prefix):
-        return self.redis.hexists(self._key_cursor.key, prefix)
 
     @property
     def keys(self):
@@ -60,21 +50,20 @@ class RModelStore(RModel):
         self.set(end)
         self.redis.rename(self.cursor.new(start).key, self.cursor.new(end).key)
 
-    def create_model(self, prefix):
+    def init_model(self, prefix):
         return self.assign(self.cursor, prefix=prefix, inst=self.instance)
 
     def add(self):
-        key = self.new_key()
-        return self.set(key)
+        return self.set(self.new_key())
 
     def get(self, prefix):
-        if self.exist(prefix):
-            return self.create_model(prefix)
+        if prefix in self:
+            return self.init_model(prefix)
 
     @ProxyRun('new')
     def set(self, prefix):
         self.redis.hset(self._key_cursor.key, prefix, self.KEY)
-        return self.create_model(prefix)
+        return self.init_model(prefix)
 
     def new_key(self):
         return self.redis.hincrby(self._key_cursor.key, self.INCR_KEY)
