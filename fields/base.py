@@ -1,7 +1,8 @@
 # coding: utf8
+from fields import RBase
 
 
-class RProperty(object):
+class RProperty(RBase):
 
     redis_field = True
 

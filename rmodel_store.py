@@ -1,6 +1,5 @@
 # coding: utf8
 
-from api.RApi import RApi
 from common import ProxyRun
 from cursor import Cursor
 from rmodel import RModel
@@ -10,8 +9,6 @@ class RModelStore(RModel):
 
     KEY = '_KEY'
     INCR_KEY = '_INCR'
-
-    api_engine = RApi()
 
     def api(self, query):
         return self.api_engine(self, query)
@@ -26,7 +23,7 @@ class RModelStore(RModel):
     def __contains__(self, prefix):
         return self.exist(prefix)
 
-    def length(self):
+    def __len__(self):
         if self.redis.hexists(self._key_cursor.key, self.INCR_KEY):
             shift = 1
         else:
@@ -56,7 +53,7 @@ class RModelStore(RModel):
     def fields(self):
         for model in self.models:
             yield model
-        for field in self._fields.values():
+        for field in self._fields:
             yield field
 
     def move(self, start, end):

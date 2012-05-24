@@ -22,7 +22,7 @@ class NestedModel(TestModel):
 
     prefix = 'nested'
 
-    nested = StoreModel
+    nested = StoreModel()
 
 incr_value = 0
 
@@ -118,19 +118,6 @@ class Test(TestCase):
         two.nested.store.set(2)
         self.assertEqual(one.nested.store.get(), 1)
         self.assertEqual(two.nested.store.get(), 2)
-
-    def test_move(self):
-        model = NestedModel()
-        model.nested.store = 1
-        self.assertEqual(model.cursor.key, 'nested')
-        self.assertEqual(model.nested.cursor.key, 'nested:nested')
-
-        new_place = Cursor('nested', 'new_place')
-        model.move(new_place)
-        self.assertEqual(model.cursor.key, 'nested:new_place')
-        self.assertEqual(model.nested.cursor.key, 'nested:new_place:nested')
-        self.assertEqual(model.nested.store, 1)
-
 
     def test_defaults(self):
         model = TestModel()

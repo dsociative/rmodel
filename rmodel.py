@@ -1,63 +1,42 @@
 #coding: utf8
 from cursor import Cursor
+from fields import RBase
+from fields.base_bound import BaseBound
 from redis.client import Redis
 
 
-def ismodel(field):
-    return hasattr(field, 'model')
+class RModel(BaseBound):
 
-
-def isfield(field):
-    return hasattr(field, 'redis_field')
-
-
-class MetaModel(type):
-
-    def __init__(cls, name, bases, attrs):
-        cls._fields = {}
-        for name in dir(cls):
-            field = getattr(cls, name)
-            if (ismodel(field) or isfield(field)) and name != 'assign':
-                cls._fields[name] = field
-        type.__init__(cls, name, bases, attrs)
-
-
-class RModel(object):
-
-    __metaclass__ = MetaModel
     defaults = False
-
-    model = True
-    redis_field = True
 
     redis = Redis()
     prefix = ''
+
+    def __new__(self, *args, **kwargs):
+        self.class_fields = dict(self.fields_gen())
+        return object.__new__(self, *args, **kwargs)
+
+    @classmethod
+    def fields_gen(cls):
+        for name in dir(cls):
+            field = getattr(cls, name)
+            if issubclass(field.__class__, RBase) and name != 'assign':
+                yield name, field
 
     def __init__(self, cursor=Cursor(), prefix=None, inst=None):
         if prefix is not None:
             self.prefix = str(prefix)
         self.cursor = cursor.new(self.prefix)
-
-        rt = {}
-        for name, field in self._fields.items():
-            field = field.bound(self, name)
-            rt[name] = field
-        self._fields = rt
-
+        self._fields = tuple(self.init_fields())
         self.instance = inst
 
-    def move(self, cursor):
-        if self.redis.exists(self.cursor.key):
-            self.redis.rename(self.cursor.key, cursor.key)
-        self.cursor = cursor
-
-        for field in self.fields:
-            if ismodel(field):
-                field.move(self.cursor.new(field.prefix))
+    def init_fields(self):
+        for name, field in self.class_fields.items():
+            yield field.bound(self, name)
 
     @property
     def fields(self):
-        return self._fields.values()
+        return self._fields
 
     @property
     def _setting(self):
@@ -89,14 +68,15 @@ class RModel(object):
     def process_data(self, fields, values):
         result = {}
         for field in fields:
-            if not ismodel(field):
+            if issubclass(field.__class__, RModel):
+                result[field.prefix] = self.process_data(field.fields,
+                                                            values)
+            else:
                 value = values.pop(0)
                 if value is None:
                     value = field.default
                 result[field.prefix] = value
-            else:
-                result[field.prefix] = self.process_data(field.fields,
-                                                            values)
+
         return result
 
     def remove(self):
@@ -107,7 +87,6 @@ class RModel(object):
     def clean(self, pipe, inst):
         for field in self.fields:
             field.clean(pipe, self)
-
 
     def data(self, pipe=None, key=None):
         child = True
@@ -141,5 +120,4 @@ class RModel(object):
 
     def init(self):
         pass
-
 

@@ -1,6 +1,9 @@
 #coding: utf8
 
-class Unbound(object):
+from fields import RBase
+
+
+class Unbound(RBase):
 
     redis_field = True
 

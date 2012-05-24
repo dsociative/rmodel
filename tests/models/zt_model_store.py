@@ -27,7 +27,7 @@ class IndexModel(RModel):
     prefix = 'model'
 
     lenght = rfield()
-    store = StoreModel
+    store = StoreModel()
 
 
 class RModelStoreTest(TestCase):
@@ -52,14 +52,14 @@ class RModelStoreTest(TestCase):
         self.assertEqual(data, {'id': 1, 'hash':{}, 'total': 1})
         self.assertEqual(model.store.keys, ['1'])
         self.assertEqual(1 in model.store, True)
-        self.assertEqual(model.store.length(), 1)
+        self.assertEqual(len(model.store), 1)
 
         self.assertEqual(model.store.get(1).data(), data)
 
         self.assertEqual(model.store.new_key(), long(2))
         item = model.store.add()
         self.assertEqual(model.store.new_key(), long(4))
-        self.assertEqual(model.store.length(), 2)
+        self.assertEqual(len(model.store), 2)
 
     def test_data(self):
         model = IndexModel()
@@ -134,10 +134,10 @@ class RModelStoreTest(TestCase):
         model = StoreModel(prefix='store')
         item = model.set(1)
         item.id.set(2)
-        self.assertEqual(model.length(), 1)
+        self.assertEqual(len(model), 1)
 
         model.move(item.prefix, 2)
-        self.assertEqual(model.length(), 1)
+        self.assertEqual(len(model), 1)
         self.assertEqual(model.keys, ['2'])
 
 
