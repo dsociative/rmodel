@@ -18,7 +18,7 @@ class RModel(BaseBound):
     def fields_gen(cls):
         for name in dir(cls):
             field = getattr(cls, name)
-            if isinstance(field, Unbound):
+            if hasattr(field, '__unbound__'):
                 yield name, field
 
     @Run('init')
@@ -47,15 +47,6 @@ class RModel(BaseBound):
         field = cls(inst.cursor, prefix, inst=inst)
         setattr(inst, field.prefix, field)
         return field
-
-    def __setitem__(self, field, value):
-        return self.redis.hset(self.cursor.key, field, value)
-
-    def __getitem__(self, field):
-        return self.redis.hget(self.cursor.key, field)
-
-    def __delitem__(self, field):
-        return self.redis.hdel(self.cursor.key, field)
 
     def typer(self, value):
         if type(value) is str and value.isdigit():

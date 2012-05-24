@@ -81,7 +81,6 @@ class Test(TestCase):
 
         self.assertEqual(model.id.get(), 1)
         self.assertEqual(model.name.get(), 'test_name')
-        model['qwe'] = 1
         self.assertEqual(model.data(), {'id': 1, 'name': 'test_name'})
 
     def test_data(self):
