@@ -50,7 +50,7 @@ class RModelStoreTest(TestCase):
         data = item.data()
 
         self.assertEqual(data, {'id': 1, 'hash': {}, 'total': 1})
-        self.assertEqual(model.store.keys, ['1'])
+        self.assertEqual(model.store.keys(), ['1'])
         self.assertEqual(1 in model.store, True)
         self.assertEqual(len(model.store), 1)
 
@@ -138,6 +138,6 @@ class RModelStoreTest(TestCase):
 
         model.move(item.prefix, 2)
         self.assertEqual(len(model), 1)
-        self.assertEqual(model.keys, ['2'])
+        self.assertEqual(model.keys(), ['2'])
 
 

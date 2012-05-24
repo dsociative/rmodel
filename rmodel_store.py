@@ -22,7 +22,6 @@ class RModelStore(RModel):
             shift = 0
         return self.redis.hlen(self._key_cursor.key) - shift
 
-    @property
     def keys(self):
 
         def ismodel_key(key):
@@ -33,14 +32,12 @@ class RModelStore(RModel):
     def items(self):
         return self.redis.hgetall(self.cursor.key).items()
 
-    @property
     def models(self):
-        for key in self.keys:
+        for key in self.keys():
             yield self.get(key)
 
-    @property
     def fields(self):
-        for model in self.models:
+        for model in self.models():
             yield model
         for field in self._fields:
             yield field

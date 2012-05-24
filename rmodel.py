@@ -37,7 +37,6 @@ class RModel(BaseBound):
         for name, field in self.class_fields.items():
             yield field.bound(self, name)
 
-    @property
     def fields(self):
         return self._fields
 
@@ -68,7 +67,7 @@ class RModel(BaseBound):
         result = {}
         for field in fields:
             if issubclass(field.__class__, RModel):
-                result[field.prefix] = self.process_data(field.fields,
+                result[field.prefix] = self.process_data(field.fields(),
                                                             values)
             else:
                 value = values.pop(0)
@@ -84,7 +83,7 @@ class RModel(BaseBound):
         pipe.execute()
 
     def clean(self, pipe, inst):
-        for field in self.fields:
+        for field in self.fields():
             field.clean(pipe, self)
 
     def data(self, pipe=None, key=None):
@@ -94,12 +93,12 @@ class RModel(BaseBound):
             child = False
             pipe = self.redis.pipeline()
 
-        for field in self.fields:
+        for field in self.fields():
             field.data(pipe, key=self.cursor.key)
 
         if not child:
             values = map(self.typer, pipe.execute())
-            return self.process_data(self.fields, values)
+            return self.process_data(self.fields(), values)
 
     def incr(self, sect, key, val=1):
         section = getattr(self, sect)

@@ -97,7 +97,7 @@ class Test(TestCase):
         model = NestedModel()
         self.assertEqual(id(model.nested.instance), id(model))
 
-        self.assertEqual(len(model.fields), 3)
+        self.assertEqual(len(model.fields()), 3)
         model.nested.store.set(1)
         self.assertEqual(model.nested.store.get(), 1)
         self.assertDictEqual(model.data(),
