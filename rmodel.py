@@ -2,8 +2,8 @@
 
 from common import Run
 from cursor import Cursor
-from fields import RBase
 from fields.base_bound import BaseBound
+from fields.unbound import Unbound
 from redis.client import Redis
 
 
@@ -14,22 +14,24 @@ class RModel(BaseBound):
     redis = Redis()
     prefix = ''
 
-    def __new__(self, *args, **kwargs):
-        self.class_fields = dict(self.fields_gen())
-        return object.__new__(self, *args, **kwargs)
-
     @classmethod
     def fields_gen(cls):
         for name in dir(cls):
             field = getattr(cls, name)
-            if issubclass(field.__class__, RBase) and name != 'assign':
+            if isinstance(field, Unbound):
                 yield name, field
 
     @Run('init')
-    def __init__(self, cursor=Cursor(), prefix=None, inst=None):
+    def __init__(self, prefix=None, inst=None):
+        self.class_fields = dict(self.fields_gen())
         if prefix is not None:
             self.prefix = str(prefix)
-        self.cursor = cursor.new(self.prefix)
+
+        if inst:
+            self.cursor = inst.cursor.new(self.prefix)
+        else:
+            self.cursor = Cursor(self.prefix)
+
         self._fields = tuple(self.init_fields())
         self.instance = inst
 

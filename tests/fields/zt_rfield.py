@@ -7,6 +7,7 @@ from unittest.case import TestCase
 
 class TModel(RModel):
     prefix = 'model'
+    root = True
 
     field = rfield(int, 0)
 

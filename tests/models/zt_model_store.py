@@ -18,6 +18,7 @@ class ItemModel(RModel):
 class StoreModel(RModelStore):
 
     assign = ItemModel
+
     prefix = 'store'
     name = rfield(str, 'default_name')
 
@@ -25,6 +26,7 @@ class StoreModel(RModelStore):
 class IndexModel(RModel):
 
     prefix = 'model'
+    root = True
 
     lenght = rfield()
     store = StoreModel()
@@ -38,13 +40,13 @@ class RModelStoreTest(TestCase):
 
     def test_init(self):
         model = IndexModel()
-        self.assertEqual(id(model.store.instance), id(model))
+        self.assertIsInstance(model, IndexModel)
 
     def test_addModel(self):
         model = IndexModel()
         item = model.store.add()
         self.assertEqual(isinstance(item, ItemModel), True)
-        self.assertEqual(id(item.instance), id(model))
+
         item.id.set(1)
         item.total.set(1)
         data = item.data()
@@ -95,12 +97,12 @@ class RModelStoreTest(TestCase):
 
 
     def test_with_model(self):
-        model = StoreModel()
+        model = StoreModel(inst=None)
         self.assertEqual(model.data(), {'name': 'default_name'})
 
 
     def test_two_models(self):
-        model = StoreModel(prefix='store1')
+        model = StoreModel(prefix='store1', inst=None)
 
         item1 = model.set(1)
         item2 = model.set(2)
@@ -110,7 +112,7 @@ class RModelStoreTest(TestCase):
         self.assertDictEqual(item2.data(), {'hash': {'1':1}, 'id': None, 'total': None})
 
     def test_clean_remove_all(self):
-        model = StoreModel(prefix='1')
+        model = StoreModel(prefix='1', inst=None)
         item = model.set(1)
 
         self.assertEqual(model.cursor.key, '1')
@@ -131,7 +133,7 @@ class RModelStoreTest(TestCase):
 
 
     def test_move(self):
-        model = StoreModel(prefix='store')
+        model = StoreModel(prefix='store', inst=None)
         item = model.set(1)
         item.id.set(2)
         self.assertEqual(len(model), 1)

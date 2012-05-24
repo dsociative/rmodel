@@ -17,8 +17,11 @@ class BaseBound(RProperty):
     Базовый класс, за счет которого поля модели при компиляции отдают :class:`Unbound`,
     который хранит поля и их настройки.
     '''
+
+    root = False
+
     def __new__(cls, *args, **kwargs):
-        if 'inst' in kwargs:
+        if 'inst' in kwargs or cls.root:
             return super(RProperty, cls).__new__(cls, *args, **kwargs)
         else:
             return Unbound(cls, *args, **kwargs)

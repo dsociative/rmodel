@@ -10,6 +10,7 @@ from unittest.case import TestCase
 class TestModel(RModel):
 
     prefix = 'testmodel'
+    root = True
 
     id = rfield(int)
     names = rlist()

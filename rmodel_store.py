@@ -48,7 +48,7 @@ class RModelStore(RModel):
         self.redis.rename(self.cursor.new(start).key, self.cursor.new(end).key)
 
     def init_model(self, prefix):
-        return self.assign(self.cursor, prefix=prefix, inst=self.instance)
+        return self.assign(prefix=prefix, inst=self)
 
     def add(self):
         return self.set(self.new_key())

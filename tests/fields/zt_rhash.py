@@ -8,11 +8,11 @@ from unittest.case import TestCase
 
 class TModel(RModel):
     prefix = 'model'
-
+    root = True
     hash = rhash('hash')
 
 class FModel(RModel):
-
+    root = True
     prefix = 'model'
 
 class Test(TestCase):

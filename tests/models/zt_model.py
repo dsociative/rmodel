@@ -2,6 +2,7 @@
 
 from cursor import Cursor
 from fields.rfield import rfield
+from fields.unbound import Unbound
 from redis.client import Redis
 from rmodel import RModel
 from unittest.case import TestCase
@@ -9,6 +10,7 @@ from unittest.case import TestCase
 class TestModel(RModel):
 
     prefix = 'testmodel'
+    root = True
 
     id = rfield(int)
     name = rfield(prefix='name')
@@ -21,7 +23,6 @@ class StoreModel(RModel):
 class NestedModel(TestModel):
 
     prefix = 'nested'
-
     nested = StoreModel()
 
 incr_value = 0
@@ -35,6 +36,7 @@ class rfield_with_onincr(rfield):
 
 class ModelWithIncr(RModel):
 
+    root = True
     incr_field = rfield_with_onincr(int, 0)
 
 class Test(TestCase):
@@ -95,8 +97,6 @@ class Test(TestCase):
 
     def test_nested_model(self):
         model = NestedModel()
-        self.assertEqual(id(model.nested.instance), id(model))
-
         self.assertEqual(len(model.fields()), 3)
         model.nested.store.set(1)
         self.assertEqual(model.nested.store.get(), 1)
@@ -114,8 +114,11 @@ class Test(TestCase):
         self.assertEqual(one.id.get(), 1)
         self.assertEqual(two.id.get(), 2)
 
+        self.assertEqual(one.nested.cursor.key, '1:nested')
+        self.assertEqual(two.nested.cursor.key, '2:nested')
         one.nested.store.set(1)
         two.nested.store.set(2)
+        self.assertNotEqual(one.nested.store, two.nested.store)
         self.assertEqual(one.nested.store.get(), 1)
         self.assertEqual(two.nested.store.get(), 2)
 
