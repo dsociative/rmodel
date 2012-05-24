@@ -49,7 +49,7 @@ class RModelStoreTest(TestCase):
         item.total.set(1)
         data = item.data()
 
-        self.assertEqual(data, {'id': 1, 'hash':{}, 'total': 1})
+        self.assertEqual(data, {'id': 1, 'hash': {}, 'total': 1})
         self.assertEqual(model.store.keys, ['1'])
         self.assertEqual(1 in model.store, True)
         self.assertEqual(len(model.store), 1)

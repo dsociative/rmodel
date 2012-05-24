@@ -1,4 +1,6 @@
 #coding: utf8
+
+from common import Run
 from cursor import Cursor
 from fields import RBase
 from fields.base_bound import BaseBound
@@ -23,6 +25,7 @@ class RModel(BaseBound):
             if issubclass(field.__class__, RBase) and name != 'assign':
                 yield name, field
 
+    @Run('init')
     def __init__(self, cursor=Cursor(), prefix=None, inst=None):
         if prefix is not None:
             self.prefix = str(prefix)
@@ -37,10 +40,6 @@ class RModel(BaseBound):
     @property
     def fields(self):
         return self._fields
-
-    @property
-    def _setting(self):
-        return self.fields
 
     @classmethod
     def bound(cls, inst, prefix):
@@ -100,7 +99,7 @@ class RModel(BaseBound):
 
         if not child:
             values = map(self.typer, pipe.execute())
-            return self.process_data(self._setting, values)
+            return self.process_data(self.fields, values)
 
     def incr(self, sect, key, val=1):
         section = getattr(self, sect)

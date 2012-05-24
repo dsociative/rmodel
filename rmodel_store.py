@@ -13,8 +13,7 @@ class RModelStore(RModel):
     def api(self, query):
         return self.api_engine(self, query)
 
-    def __init__(self, cursor=Cursor(), prefix=None, inst=None):
-        RModel.__init__(self, cursor=cursor, prefix=prefix, inst=inst)
+    def init(self):
         self._key_cursor = self.cursor.new(self.KEY)
 
     def iskey(self, value):
@@ -61,7 +60,6 @@ class RModelStore(RModel):
         self.set(end)
         self.redis.rename(self.cursor.new(start).key, self.cursor.new(end).key)
 
-    @ProxyRun('init')
     def create_model(self, prefix):
         return self.assign(self.cursor, prefix=prefix, inst=self.instance)
 
