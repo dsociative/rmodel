@@ -1,6 +1,6 @@
 # coding: utf8
 
-from common import ProxyRun
+from common import ProxyRun, Run
 from rmodel import RModel
 
 
@@ -9,7 +9,9 @@ class RModelStore(RModel):
     KEY = '_KEY'
     INCR_KEY = '_INCR'
 
-    def init(self):
+    @Run('init')
+    def __init__(self, prefix=None, inst=None):
+        RModel.__init__(self, prefix=prefix, inst=inst)
         self._key_cursor = self.cursor.new(self.KEY)
 
     def __contains__(self, prefix):

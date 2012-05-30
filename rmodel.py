@@ -3,7 +3,6 @@
 from common import Run
 from cursor import Cursor
 from fields.base_bound import BaseBound
-from fields.unbound import Unbound
 from redis.client import Redis
 
 
@@ -27,7 +26,7 @@ class RModel(BaseBound):
         if prefix is not None:
             self.prefix = str(prefix)
 
-        if inst:
+        if inst is not None:
             self.cursor = inst.cursor.new(self.prefix)
         else:
             self.cursor = Cursor(self.prefix)
