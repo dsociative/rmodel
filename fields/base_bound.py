@@ -1,5 +1,6 @@
 # coding: utf8
 
+from common import dynamic_type
 from fields.base import RProperty
 from fields.unbound import Unbound
 
@@ -13,10 +14,6 @@ def onsave(self, inst, field, data):
 
 
 class BaseBound(RProperty):
-    '''
-    Базовый класс, за счет которого поля модели при компиляции отдают :class:`Unbound`,
-    который хранит поля и их настройки.
-    '''
 
     root = False
 
@@ -26,11 +23,25 @@ class BaseBound(RProperty):
         else:
             return Unbound(cls, *args, **kwargs)
 
-    def __init__(self, _type=str, default=None, prefix=None, inst=None,
+    def __init__(self, _type=dynamic_type, default=None, prefix=None, inst=None,
                  onload=onload, onsave=onsave):
         RProperty.__init__(self, _type=_type, default=default, prefix=prefix)
         self.assign(inst)
         self.init()
+
+    def data_default(self):
+        return self.default
+
+    def fields(self):
+        pass
+
+    def process_data(self, values):
+        value = values.pop(0)
+
+        if not value:
+            return self.data_default()
+        else:
+            return self.process_result(value)
 
     def onsave(self, value):
         return value

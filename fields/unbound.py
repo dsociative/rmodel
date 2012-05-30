@@ -1,9 +1,7 @@
 #coding: utf8
 
-from fields import RBase
 
-
-class Unbound(RBase):
+class Unbound(object):
 
     __unbound__ = 1
 

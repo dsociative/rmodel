@@ -6,14 +6,17 @@ from redis.client import Redis
 from rmodel import RModel
 from unittest.case import TestCase
 
+
 class TModel(RModel):
     prefix = 'model'
     root = True
-    hash = rhash('hash')
+    hash = rhash(int)
+
 
 class FModel(RModel):
     root = True
     prefix = 'model'
+
 
 class Test(TestCase):
 
@@ -34,7 +37,7 @@ class Test(TestCase):
         self.assertIsInstance(rhash('test', int, 0), Unbound)
 
         bound_field['q'] = 1
-        self.assertEqual(bound_field.data(), {'q':1})
+        self.assertEqual(bound_field.data(), {'q': 1})
         self.assertEqual(bound_field.prefix, 'test')
 
     def test_two_model(self):
@@ -44,7 +47,7 @@ class Test(TestCase):
         model2.hash['1'] = 1
 
         self.assertDictEqual(model1.data(), {'hash':{}})
-        self.assertDictEqual(model2.data(), {'hash':{'1':1}})
+        self.assertDictEqual(model2.data(), {'hash':{'1': 1}})
 
 
 

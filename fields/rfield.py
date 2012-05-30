@@ -1,6 +1,5 @@
 # coding: utf8
 
-from fields.base import RProperty
 from fields.base_bound import BaseBound
 
 
@@ -10,10 +9,6 @@ class rfield(BaseBound):
         self.key = inst.cursor.key
         self.instance = inst
         self.redis = inst.redis
-
-    def __init__(self, _type=str, default=None, prefix=None, inst=None):
-        RProperty.__init__(self, _type=_type, default=default, prefix=prefix)
-        self.assign(inst)
 
     def clean(self, pipe=None, inst=None):
         pipe = pipe or self.redis

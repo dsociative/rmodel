@@ -10,6 +10,9 @@ class rhash(BaseBound):
     def __contains__(self, key):
         return key in self.keys
 
+    def data_default(self):
+        return {}
+
     @property
     def keys(self):
         return self.redis.hkeys(self.key)
@@ -53,14 +56,13 @@ class rhash(BaseBound):
     def remove(self, field):
         return self.redis.hdel(self.key, field)
 
-    def process_result(self, rt):
-        if type(rt) is str:
-            if rt.isdigit() or rt[0] == '-' and rt[1:].isdigit():
-                return int(rt)
-            else:
-                return rt
+    def process_result(self, values):
+        if type(values) is dict:
+            for k, v in values.iteritems():
+                values[k] = super(rhash, self).process_result(v)
+            return values
         else:
-            return BaseBound.process_result(self, rt)
+            return super(rhash, self).process_result(values)
 
     def process(self, rt):
         for key, value in rt.iteritems():

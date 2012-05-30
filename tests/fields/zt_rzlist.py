@@ -22,7 +22,7 @@ class Test(TestCase):
         self.field = self.model.names
 
     def test_(self):
-        self.assertEqual(self.model.names.default, [])
+        self.assertEqual(self.model.names.data_default(), [])
         self.assertEqual(self.model.data(), {'id': None, 'names': []})
 
         self.field.add('uid1', 555)

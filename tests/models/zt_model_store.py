@@ -76,14 +76,12 @@ class RModelStoreTest(TestCase):
         self.assertEqual(item.id.get(), 1)
         self.assertEqual(item.total.get(), 2)
 
-
         self.assertDictEqual(item.data(), {'total': 2, 'hash':{}, 'id': 1})
         self.assertDictEqual(item2.data(), {'total': 4, 'hash':{}, 'id': 8})
         self.assertDictEqual(model.store.data(),
                          {'1': {'hash': {}, 'id': 1, 'total': 2},
                           '2': {'hash': {}, 'id': 8, 'total': 4},
                           'name': 'default_name'})
-
 
     def test_remove(self):
         model = IndexModel()
@@ -95,11 +93,9 @@ class RModelStoreTest(TestCase):
         model.store.remove_item(1)
         self.assertFalse(model.store.get(1))
 
-
     def test_with_model(self):
         model = StoreModel(inst=None)
         self.assertEqual(model.data(), {'name': 'default_name'})
-
 
     def test_two_models(self):
         model = StoreModel(prefix='store1', inst=None)
@@ -117,7 +113,6 @@ class RModelStoreTest(TestCase):
 
         self.assertEqual(model.cursor.key, '1')
         self.assertEqual(item.cursor.key, '1:1')
-
 
         item.id.set(1)
         item.hash.set('2', '3')

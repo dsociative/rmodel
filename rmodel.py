@@ -48,26 +48,15 @@ class RModel(BaseBound):
         setattr(inst, field.prefix, field)
         return field
 
+
+
     def typer(self, value):
-        if type(value) is str and value.isdigit():
-            value = int(value)
-        elif type(value) is dict:
-            for k, v in value.items():
-                value[k] = self.typer(v)
         return value
 
-    def process_data(self, fields, values):
+    def process_data(self, values):
         result = {}
-        for field in fields:
-            if issubclass(field.__class__, RModel):
-                result[field.prefix] = self.process_data(field.fields(),
-                                                            values)
-            else:
-                value = values.pop(0)
-                if value is None:
-                    value = field.default
-                result[field.prefix] = value
-
+        for field in self.fields():
+            result[field.prefix] = field.process_data(values)
         return result
 
     def remove(self):
@@ -91,7 +80,7 @@ class RModel(BaseBound):
 
         if not child:
             values = map(self.typer, pipe.execute())
-            return self.process_data(self.fields(), values)
+            return self.process_data(values)
 
     def incr(self, sect, key, val=1):
         section = getattr(self, sect)

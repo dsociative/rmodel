@@ -1,6 +1,6 @@
 # coding: utf8
 
-from common import ProxyRun
+from common import ProxyRun, dynamic_type
 from unittest.case import TestCase
 
 
@@ -31,3 +31,13 @@ class CommonTest(TestCase):
         self.assertEqual(obj.kwarg, {'new': True})
         self.assertEqual(obj.id, 3)
 
+
+class DynamicTypeTest(TestCase):
+
+    def test(self):
+        self.assertEqual(1, dynamic_type('1'))
+        self.assertEqual(50, dynamic_type('50'))
+        self.assertEqual(-50, dynamic_type('-50'))
+        self.assertEqual({'1': 20, '3': 'hello'},
+                         dynamic_type({'1': '20', '3': 'hello'}))
+        self.assertEqual('50a', dynamic_type('50a'))

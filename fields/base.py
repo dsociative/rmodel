@@ -1,8 +1,7 @@
 # coding: utf8
-from fields import RBase
 
 
-class RProperty(RBase):
+class RProperty(object):
 
     redis_field = True
 
@@ -20,15 +19,14 @@ class RProperty(RBase):
 
     def typer(self, value):
         if value != None:
-            if self.type:
-                value = self.type(value)
+            value = self.type(value)
         return value
 
     def process_result(self, rt):
-        if not rt is None:
-            return self.type(rt)
-        else:
+        if rt is None:
             return self.default
+        else:
+            return self.type(rt)
 
     def data(self, redis, key):
         return redis.hget(key, self.prefix)
