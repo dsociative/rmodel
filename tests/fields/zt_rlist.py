@@ -34,6 +34,8 @@ class Test(TestCase):
         self.field.append('sd')
         self.assertEqual(self.field.data(), ['myname', 'sd'])
         self.assertEqual(len(self.field), 2)
+        self.field.append('one', 'two')
+        self.assertEqual(self.field.data(), ['myname', 'sd', 'one', 'two'])
 
 
 
