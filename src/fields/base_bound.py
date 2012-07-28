@@ -1,6 +1,6 @@
 # coding: utf8
 
-from common import dynamic_type
+from ..common import dynamic_type
 from fields.base import RProperty
 from fields.unbound import Unbound
 
