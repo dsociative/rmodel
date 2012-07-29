@@ -1,6 +1,6 @@
 
-Depends:
+Requirements:
 ------------
 
 * rlist field needed 
-** redis 2.4
+	* redis 2.4
