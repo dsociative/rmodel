@@ -2,4 +2,5 @@
 Depends:
 ------------
 
-rlist field needed redis 2.4
+* rlist field needed 
+** redis 2.4
