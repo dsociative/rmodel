@@ -1,17 +1,17 @@
 # coding: utf8
 
-from common import ProxyRun, Run
-from rmodel import RModel
+from rmodel.common import Run, ProxyRun
+from rmodel.models.runit import RUnit
 
 
-class RModelStore(RModel):
+class RStore(RUnit):
 
     KEY = '_KEY'
     INCR_KEY = '_INCR'
 
     @Run('init')
     def __init__(self, prefix=None, inst=None):
-        RModel.__init__(self, prefix=prefix, inst=inst)
+        RUnit.__init__(self, prefix=prefix, inst=inst)
         self._key_cursor = self.cursor.new(self.KEY)
 
     def __contains__(self, prefix):
@@ -77,7 +77,7 @@ class RModelStore(RModel):
             self.delete_key(prefix)
 
     def clean(self, pipe, inst):
-        RModel.clean(self, pipe, inst)
+        RUnit.clean(self, pipe, inst)
 
         pipe.delete(self.cursor.key)
         pipe.delete(self._key_cursor.key)

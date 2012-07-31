@@ -1,13 +1,13 @@
 #coding: utf8
 
-from cursor import Cursor
-from fields.rfield import rfield
 from redis.client import Redis
-from rmodel import RModel
+from rmodel.cursor import Cursor
+from rmodel.fields.rfield import rfield
+from rmodel.models.runit import RUnit
 from unittest.case import TestCase
 
 
-class TestModel(RModel):
+class TestModel(RUnit):
 
     prefix = 'testmodel'
     root = True
@@ -16,7 +16,7 @@ class TestModel(RModel):
     name = rfield(prefix='name')
 
 
-class StoreModel(RModel):
+class StoreModel(RUnit):
 
     prefix = 'storemodel'
     store = rfield(int)
@@ -37,7 +37,7 @@ class rfield_with_onincr(rfield):
         return rfield.onincr(self, value + incr_value)
 
 
-class ModelWithIncr(RModel):
+class ModelWithIncr(RUnit):
 
     root = True
     incr_field = rfield_with_onincr(int, 0)

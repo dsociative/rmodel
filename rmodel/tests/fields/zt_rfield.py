@@ -1,19 +1,22 @@
 #coding: utf8
 
-from fields.rfield import rfield
 from redis.client import Redis
-from rmodel import RModel
+from rmodel.fields.rfield import rfield
+from rmodel.models.runit import RUnit
 from unittest.case import TestCase
 
-class TModel(RModel):
+
+class TModel(RUnit):
     prefix = 'model'
     root = True
 
     field = rfield(int, 0)
 
-class FModel(RModel):
+
+class FModel(RUnit):
 
     prefix = 'model'
+
 
 class Test(TestCase):
 

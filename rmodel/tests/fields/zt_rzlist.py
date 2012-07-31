@@ -2,11 +2,11 @@
 from fields.rfield import rfield
 from fields.rzlist import rzlist
 from redis.client import Redis
-from rmodel import RModel
+from rmodel.models.runit import RUnit
 from unittest.case import TestCase
 
 
-class TestModel(RModel):
+class TestModel(RUnit):
     prefix = 'testmodel'
     root = True
 

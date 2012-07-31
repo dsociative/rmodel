@@ -3,19 +3,19 @@
 from fields.rfield import rfield
 from fields.rhash import rhash
 from redis.client import Redis
-from rmodel import RModel
-from rmodel_store import RModelStore
+from rmodel.models.runit import RUnit
+from rmodel.models.rstore import RStore
 from unittest.case import TestCase
 
 
-class ItemModel(RModel):
+class ItemModel(RUnit):
 
     id = rfield(int)
     total = rfield(int)
     hash = rhash(int, 0)
 
 
-class StoreModel(RModelStore):
+class StoreModel(RStore):
 
     assign = ItemModel
 
@@ -23,7 +23,7 @@ class StoreModel(RModelStore):
     name = rfield(str, 'default_name')
 
 
-class IndexModel(RModel):
+class IndexModel(RUnit):
 
     prefix = 'model'
     root = True

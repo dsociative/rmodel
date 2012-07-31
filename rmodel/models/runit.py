@@ -1,12 +1,12 @@
 #coding: utf8
 
-from common import Run
-from cursor import Cursor
-from fields.base_bound import BaseBound
+from rmodel.common import Run
+from rmodel.cursor import Cursor
+from rmodel.fields.base_bound import BaseBound
 from redis.client import Redis
 
 
-class RModel(BaseBound):
+class RUnit(BaseBound):
 
     defaults = False
 

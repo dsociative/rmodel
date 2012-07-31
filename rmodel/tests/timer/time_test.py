@@ -1,11 +1,11 @@
 #coding: utf8
 
-from model.rmodel import RModel
+from model.rmodel import RUnit
 from model.fields.rfield import rfield
 from model.fields.rhash import rhash
 import timeit
 
-class TestBuilding(RModel):
+class TestBuilding(RUnit):
 
     prefix = 'tbuilding'
 

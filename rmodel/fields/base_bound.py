@@ -1,8 +1,8 @@
 # coding: utf8
 
-from ..common import dynamic_type
-from fields.base import RProperty
-from fields.unbound import Unbound
+from rmodel.common import dynamic_type
+from rmodel.fields.base import RProperty
+from rmodel.fields.unbound import Unbound
 
 
 def onload(self, inst, field, data):

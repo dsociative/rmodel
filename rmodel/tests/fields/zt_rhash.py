@@ -1,19 +1,19 @@
 #coding: utf8
 
 from fields.rhash import rhash
-from fields.unbound import Unbound
 from redis.client import Redis
-from rmodel import RModel
+from rmodel.fields.unbound import Unbound
+from rmodel.models.runit import RUnit
 from unittest.case import TestCase
 
 
-class TModel(RModel):
+class TModel(RUnit):
     prefix = 'model'
     root = True
     hash = rhash(int)
 
 
-class FModel(RModel):
+class FModel(RUnit):
     root = True
     prefix = 'model'
 
