@@ -31,6 +31,9 @@ class Test(TestCase):
         model.field -= 10
         self.assertEqual(model.field.get(), -10)
 
-
-
+    def test_changes(self):
+        model = TModel()
+        self.assertEqual(model.field._changes, None)
+        model.field.set('123')
+        self.assertEqual(model.field._changes, '123')
 

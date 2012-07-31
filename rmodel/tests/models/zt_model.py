@@ -96,7 +96,7 @@ class Test(TestCase):
         self.assertEqual(model.id.get(), 1)
         self.assertEqual(model.name.get(), 'test_name')
 
-        self.assertEqual(model.data(), {'id':1, 'name':'test_name'})
+        self.assertEqual(model.data(), {'id': 1, 'name': 'test_name'})
 
     def test_nested_model(self):
         model = NestedModel()
@@ -127,11 +127,16 @@ class Test(TestCase):
 
     def test_defaults(self):
         model = TestModel()
-        TestModel.defaults = {'id':334, 'name':'HELLO'}
+        TestModel.defaults = {'id': 334, 'name': 'HELLO'}
 
         self.assertEqual(model.id.get(), 334)
         self.assertEqual(model.name.get(), 'HELLO')
         TestModel.defaults = False
 
-
-
+    def test_changes(self):
+        model = TestModel()
+        self.assertEqual(model.changes(), {})
+        model.name.set('new_name')
+        self.assertEqual(model.changes(), {'name': 'new_name'})
+        model.id.set('334')
+        self.assertEqual(model.changes(), {'name': 'new_name', 'id': '334'})

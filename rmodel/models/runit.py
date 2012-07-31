@@ -47,8 +47,6 @@ class RUnit(BaseBound):
         setattr(inst, field.prefix, field)
         return field
 
-
-
     def typer(self, value):
         return value
 
@@ -62,6 +60,15 @@ class RUnit(BaseBound):
         pipe = self.redis.pipeline()
         self.clean(pipe, self)
         pipe.execute()
+
+    def changes_gen(self):
+        for field in self.fields():
+            changes = field.changes()
+            if changes:
+                yield field.prefix, changes
+
+    def changes(self):
+        return dict(self.changes_gen())
 
     def clean(self, pipe, inst):
         for field in self.fields():

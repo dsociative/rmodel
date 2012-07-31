@@ -26,8 +26,12 @@ class BaseBound(RProperty):
     def __init__(self, _type=dynamic_type, default=None, prefix=None, inst=None,
                  onload=onload, onsave=onsave):
         RProperty.__init__(self, _type=_type, default=default, prefix=prefix)
+        self._changes = None
         self.assign(inst)
         self.init()
+
+    def changes(self):
+        return self._changes
 
     def data_default(self):
         return self.default

@@ -15,6 +15,7 @@ class rfield(BaseBound):
         pipe.hdel(self.key, self.prefix)
 
     def set(self, value):
+        self._changes = value
         return self.redis.hset(self.key, self.prefix, self.onsave(value))
 
     def get(self):
