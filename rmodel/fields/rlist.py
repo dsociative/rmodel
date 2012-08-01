@@ -1,6 +1,6 @@
 # coding: utf8
 
-from fields.base_bound import BaseBound
+from rmodel.fields.base_bound import BaseBound
 
 
 class rlist(BaseBound):
@@ -13,9 +13,9 @@ class rlist(BaseBound):
 
     def data(self, redis=None, key=False):
         '''
-        :returns: Список        
+        :returns: Список
         >>> print [('key1', 10.0), ('key2', (11.0))]
-        
+
         '''
 
         redis = redis or self.redis
@@ -27,7 +27,7 @@ class rlist(BaseBound):
         :type name: str
         :param score: Начальный счет
         :type score: int, float
-        
+
         Добавляет новую запись в список
         '''
 
@@ -47,3 +47,6 @@ class rlist(BaseBound):
         '''
 
         return self.redis.lrange(self.key, frm, to)
+
+    def pop(self):
+        return self.redis.lpop(self.key)

@@ -1,8 +1,8 @@
 #coding: utf8
 
-from fields.rfield import rfield
-from fields.rlist import rlist
 from redis.client import Redis
+from rmodel.fields.rfield import rfield
+from rmodel.fields.rlist import rlist
 from rmodel.models.runit import RUnit
 from unittest.case import TestCase
 
@@ -36,6 +36,13 @@ class Test(TestCase):
         self.assertEqual(len(self.field), 2)
         self.field.append('one', 'two')
         self.assertEqual(self.field.data(), ['myname', 'sd', 'one', 'two'])
+
+    def test_pop(self):
+        self.assertEqual(self.field.data(), [])
+        self.field.append('value1')
+        self.assertEqual(self.field.data(), ['value1'])
+        self.assertEqual(self.field.pop(), 'value1')
+        self.assertEqual(self.field.pop(), None)
 
 
 
