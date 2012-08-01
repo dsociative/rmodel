@@ -140,3 +140,10 @@ class Test(TestCase):
         self.assertEqual(model.changes(), {'name': 'new_name'})
         model.id.set('334')
         self.assertEqual(model.changes(), {'name': 'new_name', 'id': '334'})
+
+    def test_changes_in_nested_model(self):
+        model = NestedModel()
+        self.assertEqual(model.changes(), {})
+        model.nested.store.set(1)
+
+        self.assertEqual(model.changes(), {'nested': {'store': 1}})

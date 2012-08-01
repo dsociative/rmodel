@@ -5,21 +5,24 @@ from rmodel.fields.base_bound import BaseBound
 
 class rlist(BaseBound):
     '''
-    Поле для работы с сортированными списками
+    Поле для работы со списками
     '''
 
-    def __init__(self, _type=None, default=[], prefix=None, inst=None):
-        super(rlist, self).__init__(_type, default, prefix, inst)
+    def data_default(self):
+        return []
 
-    def data(self, redis=None, key=False):
+    def data(self, pipe=None, key=False):
         '''
-        :returns: Список
-        >>> print [('key1', 10.0), ('key2', (11.0))]
-
+        :returns: ['item1', 'item2']
         '''
 
-        redis = redis or self.redis
-        return redis.lrange(self.key, 0, -1)
+        redis = pipe or self.redis
+        value = redis.lrange(self.key, 0, -1)
+
+        if not pipe:
+            return [self.typer(i) for i in value]
+        else:
+            return value
 
     def append(self, *values):
         '''
@@ -33,10 +36,13 @@ class rlist(BaseBound):
 
         return self.redis.rpush(self.key, *values)
 
+    def process_result(self, rt):
+        return [self.type(i) for i in rt]
+
     def __len__(self):
         return self.redis.llen(self.key)
 
-    def range(self, frm=0, to= -1, withscores=False):
+    def range(self, frm=0, to= -1):
         '''
         :param frm: Начальная позиция выборки
         :type frm: int
@@ -47,6 +53,14 @@ class rlist(BaseBound):
         '''
 
         return self.redis.lrange(self.key, frm, to)
+
+    def set(self, values):
+        '''
+        :param values: iterable values
+        Clean and append new values
+        '''
+        self.clean()
+        self.append(*values)
 
     def pop(self):
         return self.redis.lpop(self.key)

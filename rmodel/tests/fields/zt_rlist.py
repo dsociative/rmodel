@@ -16,6 +16,12 @@ class TestModel(RUnit):
     names = rlist()
 
 
+class TypingModel(RUnit):
+
+    root = True
+    names = rlist(int)
+
+
 class Test(TestCase):
 
     def setUp(self):
@@ -25,7 +31,7 @@ class Test(TestCase):
         self.field = self.model.names
 
     def test_(self):
-        self.assertEqual(self.model.names.default, [])
+        self.assertEqual(self.model.names.data(), [])
         self.assertEqual(self.model.data(), {'id': None, 'names': []})
 
         self.assertEqual(len(self.field), 0)
@@ -44,8 +50,13 @@ class Test(TestCase):
         self.assertEqual(self.field.pop(), 'value1')
         self.assertEqual(self.field.pop(), None)
 
+    def test_set(self):
+        self.field.set(['123', '42'])
+        self.assertEqual(self.field.data(), [123, 42])
 
+    def test_typing(self):
+        model = TypingModel()
+        model.names.set(['123', '42'])
 
-
-
-
+        self.assertEqual(model.data(), {'names': [123, 42]})
+        self.assertEqual(model.names.data(), [123, 42])
