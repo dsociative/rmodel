@@ -33,8 +33,7 @@ class rlist(BaseBound):
 
         Добавляет новую запись в список
         '''
-
-        return self.redis.rpush(self.key, *values)
+        return self.redis.rpush(self.key, *self.onsave(values))
 
     def process_result(self, rt):
         return [self.type(i) for i in rt]
