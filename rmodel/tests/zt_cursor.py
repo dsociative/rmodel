@@ -1,7 +1,8 @@
 # coding: utf8
 
 from cursor import Cursor
-from unittest.case import TestCase
+from unittest2.case import TestCase
+
 
 class CursorTest(TestCase):
 
@@ -16,7 +17,6 @@ class CursorTest(TestCase):
         self.assertEqual(new.key, 'user:100:location')
         new = new.new('1')
         self.assertEqual(new.key, 'user:100:location:1')
-
 
     def test_new(self):
         new = self.cursor.new('location', 2)

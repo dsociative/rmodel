@@ -4,7 +4,7 @@ from redis.client import Redis
 from rmodel.fields.rfield import rfield
 from rmodel.fields.rlist import rlist
 from rmodel.models.runit import RUnit
-from unittest.case import TestCase
+from unittest2.case import TestCase
 
 
 class TestModel(RUnit):

@@ -1,7 +1,7 @@
 # coding: utf8
 
 from common import ProxyRun, dynamic_type
-from unittest.case import TestCase
+from unittest2.case import TestCase
 
 
 class ProxyObj(object):

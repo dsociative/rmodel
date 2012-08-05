@@ -5,7 +5,7 @@ from fields.rhash import rhash
 from redis.client import Redis
 from rmodel.models.runit import RUnit
 from rmodel.models.rstore import RStore
-from unittest.case import TestCase
+from unittest2.case import TestCase
 
 
 class ItemModel(RUnit):

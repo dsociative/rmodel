@@ -3,7 +3,7 @@ from fields.rfield import rfield
 from fields.rzlist import rzlist
 from redis.client import Redis
 from rmodel.models.runit import RUnit
-from unittest.case import TestCase
+from unittest2.case import TestCase
 
 
 class TestModel(RUnit):
