@@ -61,5 +61,11 @@ class rlist(BaseBound):
         self.clean()
         self.append(*values)
 
+    def remove(self, value):
+        '''
+        :param value: value that must be removed
+        '''
+        return self.redis.lrem(self.key, value)
+
     def pop(self):
         return self.redis.lpop(self.key)

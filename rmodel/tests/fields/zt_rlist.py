@@ -60,3 +60,10 @@ class Test(TestCase):
 
         self.assertEqual(model.data(), {'names': [123, 42]})
         self.assertEqual(model.names.data(), [123, 42])
+
+    def test_remove(self):
+        self.model.names.append('hello', 'test')
+        self.model.names.remove('hello')
+        self.assertEqual(self.model.names.data(), ['test'])
+        self.model.names.remove('not_in_redis_key')
+        self.assertEqual(self.model.names.data(), ['test'])
