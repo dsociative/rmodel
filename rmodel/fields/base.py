@@ -28,9 +28,6 @@ class RProperty(object):
         else:
             return self.type(rt)
 
-    def data(self, redis, key):
-        return redis.hget(key, self.prefix)
-
     @property
     def _setting(self):
         return (self.prefix, self._default)

@@ -8,6 +8,9 @@ class rlist(BaseBound):
     Поле для работы со списками
     '''
 
+    def __contains__(self, value):
+        return value in self.data()
+
     def data_default(self):
         return []
 

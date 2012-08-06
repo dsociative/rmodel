@@ -67,3 +67,10 @@ class Test(TestCase):
         self.assertEqual(self.model.names.data(), ['test'])
         self.model.names.remove('not_in_redis_key')
         self.assertEqual(self.model.names.data(), ['test'])
+
+    def test_contains_false(self):
+        self.assertEqual('hello' in self.model.names, False)
+
+    def test_contains_true(self):
+        self.model.names.append('hello')
+        self.assertEqual('hello' in self.model.names, True)
