@@ -33,3 +33,10 @@ class rset(BaseBound):
         http://redis.io/commands/spop
         '''
         return self.redis.spop(self.key)
+
+    def remove(self, key):
+        '''
+        :param key: to remove from set
+        http://redis.io/commands/srem
+        '''
+        return self.redis.srem(self.key, key)

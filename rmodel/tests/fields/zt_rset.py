@@ -41,4 +41,13 @@ class Test(TestCase):
     def test_pop(self):
         self.field.append('name')
         self.assertEqual(self.field.pop(), 'name')
-        self.assertEqual(self.field.data(), None)
+        self.assertEqual(self.field.data(), [])
+
+    def test_remove_null(self):
+        self.assertEqual(self.field.remove('name'), 0)
+
+    def test_remove(self):
+        self.field.append('name')
+        self.assertEqual(self.field.remove('name'), 1)
+        self.assertEqual(self.field.data(), [])
+
