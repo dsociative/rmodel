@@ -18,22 +18,26 @@ class FModel(RUnit):
     prefix = 'model'
 
 
-class Test(TestCase):
+class RfieldTest(TestCase):
 
     def setUp(self):
         self.redis = Redis()
         self.redis.flushdb()
+        self.model = TModel()
 
     def test_init(self):
-        model = TModel()
+        self.assertEqual(self.model.field.get(), 0)
+        self.assertEqual(self.model.field._changes, None)
 
-        self.assertEqual(model.field.get(), 0)
-        model.field -= 10
-        self.assertEqual(model.field.get(), -10)
+    def test_incr(self):
+        self.model.field -= 10
+        self.assertEqual(self.model.field.get(), -10)
 
-    def test_changes(self):
-        model = TModel()
-        self.assertEqual(model.field._changes, None)
-        model.field.set('123')
-        self.assertEqual(model.field._changes, '123')
+    def test_changes_set(self):
+        self.model.field.set('123')
+        self.assertEqual(self.model.field.changes(), '123')
 
+    def test_changes_clean(self):
+        self.model.field.set('123')
+        self.model.field.clean()
+        self.assertEqual(self.model.field.changes(), None)

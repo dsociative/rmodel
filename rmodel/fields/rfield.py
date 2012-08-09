@@ -13,6 +13,7 @@ class rfield(BaseBound):
     def clean(self, pipe=None, inst=None):
         pipe = pipe or self.redis
         pipe.hdel(self.key, self.prefix)
+        self._changes = None
 
     def data(self, redis, key):
         return redis.hget(key, self.prefix)
