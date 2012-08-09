@@ -1,7 +1,7 @@
 # coding: utf8
 
-from fields.rfield import rfield
-from fields.rhash import rhash
+from rmodel.fields.rfield import rfield
+from rmodel.fields.rhash import rhash
 from redis.client import Redis
 from rmodel.models.runit import RUnit
 from rmodel.models.rstore import RStore
@@ -30,6 +30,20 @@ class IndexModel(RUnit):
 
     lenght = rfield()
     store = StoreModel()
+
+
+class NewItem(RUnit):
+
+    field = rfield()
+
+    def new(self, value):
+        self.field.set(value)
+
+
+class NewTestModel(RStore):
+
+    root = True
+    assign = NewItem
 
 
 class RModelStoreTest(TestCase):
@@ -76,8 +90,8 @@ class RModelStoreTest(TestCase):
         self.assertEqual(item.id.get(), 1)
         self.assertEqual(item.total.get(), 2)
 
-        self.assertDictEqual(item.data(), {'total': 2, 'hash':{}, 'id': 1})
-        self.assertDictEqual(item2.data(), {'total': 4, 'hash':{}, 'id': 8})
+        self.assertDictEqual(item.data(), {'total': 2, 'hash': {}, 'id': 1})
+        self.assertDictEqual(item2.data(), {'total': 4, 'hash': {}, 'id': 8})
         self.assertDictEqual(model.store.data(),
                          {'1': {'hash': {}, 'id': 1, 'total': 2},
                           '2': {'hash': {}, 'id': 8, 'total': 4},
@@ -104,8 +118,10 @@ class RModelStoreTest(TestCase):
         item2 = model.set(2)
         item2.hash['1'] = 1
 
-        self.assertDictEqual(item1.data(), {'hash': {}, 'id': None, 'total': None})
-        self.assertDictEqual(item2.data(), {'hash': {'1':1}, 'id': None, 'total': None})
+        self.assertDictEqual(item1.data(), {'hash': {}, 'id': None,
+                                            'total': None})
+        self.assertDictEqual(item2.data(), {'hash': {'1': 1}, 'id': None,
+                                            'total': None})
 
     def test_clean_remove_all(self):
         model = StoreModel(prefix='1', inst=None)
@@ -126,7 +142,6 @@ class RModelStoreTest(TestCase):
         self.assertEqual(self.redis.hgetall('1:1:hash'), {})
         self.assertEqual(self.redis.hgetall('1'), {})
 
-
     def test_move(self):
         model = StoreModel(prefix='store', inst=None)
         item = model.set(1)
@@ -137,4 +152,9 @@ class RModelStoreTest(TestCase):
         self.assertEqual(len(model), 1)
         self.assertEqual(model.keys(), ['2'])
 
-
+    def test_custom_new_with_args(self):
+        model = NewTestModel()
+        item = model.add('test_values')
+        self.assertEqual(item.field.get(), 'test_values')
+        item = model.set('test', 'somthing_else')
+        self.assertEqual(item.field.get(), 'somthing_else')

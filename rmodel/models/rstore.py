@@ -52,17 +52,18 @@ class RStore(RUnit):
     def init_model(self, prefix):
         return self.assign(prefix=prefix, inst=self)
 
-    def add(self):
-        return self.set(self.new_key())
+    def add(self, *args, **kwargs):
+        return self.set(self.new_key(), *args, **kwargs)
 
     def get(self, prefix):
         if prefix in self:
             return self.init_model(prefix)
 
-    @ProxyRun('new')
-    def set(self, prefix):
+    def set(self, prefix, *args, **kwargs):
         self.redis.hset(self._key_cursor.key, prefix, self.KEY)
-        return self.init_model(prefix)
+        model = self.init_model(prefix)
+        model.new(*args, **kwargs)
+        return model
 
     def new_key(self):
         return self.redis.hincrby(self._key_cursor.key, self.INCR_KEY)
