@@ -1,6 +1,7 @@
 #coding: utf8
 
 from redis.client import Redis
+from rmodel.fields.base_bound import no_changes
 from rmodel.fields.rfield import rfield
 from rmodel.models.runit import RUnit
 from unittest2.case import TestCase
@@ -27,7 +28,7 @@ class RfieldTest(TestCase):
 
     def test_init(self):
         self.assertEqual(self.model.field.get(), 0)
-        self.assertEqual(self.model.field._changes, None)
+        self.assertEqual(self.model.field._changes, no_changes)
 
     def test_incr(self):
         self.model.field -= 10
@@ -41,3 +42,5 @@ class RfieldTest(TestCase):
         self.model.field.set('123')
         self.model.field.clean()
         self.assertEqual(self.model.field.changes(), None)
+        self.assertEqual(self.model.changes(), {'field': None})
+

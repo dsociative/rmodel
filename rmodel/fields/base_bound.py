@@ -13,6 +13,9 @@ def onsave(self, inst, field, data):
     return data
 
 
+no_changes = {}
+
+
 class BaseBound(RProperty):
 
     root = False
@@ -26,7 +29,7 @@ class BaseBound(RProperty):
     def __init__(self, _type=dynamic_type, default=None, prefix=None, inst=None,
                  onload=onload, onsave=onsave):
         RProperty.__init__(self, _type=_type, default=default, prefix=prefix)
-        self._changes = None
+        self._changes = no_changes
         self.assign(inst)
         self.init()
 

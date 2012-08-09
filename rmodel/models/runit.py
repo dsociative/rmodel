@@ -1,9 +1,9 @@
 #coding: utf8
 
+from redis.client import Redis
 from rmodel.common import Run
 from rmodel.cursor import Cursor
-from rmodel.fields.base_bound import BaseBound
-from redis.client import Redis
+from rmodel.fields.base_bound import BaseBound, no_changes
 
 
 class RUnit(BaseBound):
@@ -64,11 +64,11 @@ class RUnit(BaseBound):
     def changes_gen(self):
         for field in self.fields():
             changes = field.changes()
-            if changes:
+            if changes is not no_changes:
                 yield field.prefix, changes
 
     def changes(self):
-        return dict(self.changes_gen())
+        return dict(self.changes_gen()) or no_changes
 
     def clean(self, pipe, inst):
         for field in self.fields():

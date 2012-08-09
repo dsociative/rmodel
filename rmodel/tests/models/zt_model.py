@@ -2,6 +2,7 @@
 
 from redis.client import Redis
 from rmodel.cursor import Cursor
+from rmodel.fields.base_bound import no_changes
 from rmodel.fields.rfield import rfield
 from rmodel.models.runit import RUnit
 from unittest2.case import TestCase
@@ -135,7 +136,7 @@ class Test(TestCase):
 
     def test_changes(self):
         model = TestModel()
-        self.assertEqual(model.changes(), {})
+        self.assertEqual(model.changes(), no_changes)
         model.name.set('new_name')
         self.assertEqual(model.changes(), {'name': 'new_name'})
         model.id.set('334')
@@ -143,7 +144,7 @@ class Test(TestCase):
 
     def test_changes_in_nested_model(self):
         model = NestedModel()
-        self.assertEqual(model.changes(), {})
-        model.nested.store.set(1)
+        self.assertEqual(model.changes(), no_changes)
+        model.nested.store.set(0)
 
-        self.assertEqual(model.changes(), {'nested': {'store': 1}})
+        self.assertEqual(model.changes(), {'nested': {'store': 0}})
