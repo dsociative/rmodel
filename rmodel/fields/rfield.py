@@ -28,10 +28,14 @@ class rfield(BaseBound):
     def onincr(self, value):
         return value
 
-    def __isub__(self, value):
-        self.redis.hincrby(self.cursor.key, self.prefix, self.onincr(-value))
+    def incr(self, value):
+        value = self.redis.hincrby(self.cursor.key, self.prefix,
+                                   self.onincr(value))
+        self._session.add(self.cursor.items, value, self.prefix)
         return self
 
+    def __isub__(self, value):
+        return self.incr(-value)
+
     def __iadd__(self, value):
-        self.redis.hincrby(self.cursor.key, self.prefix, self.onincr(value))
-        return self
+        return self.incr(value)

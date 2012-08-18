@@ -60,6 +60,13 @@ class RSessionTest(TestCase):
         self.assertEqual(self.session._store, [(('simple',),
                                                 {'field': 'test'})])
 
+    def test_rfield_incr(self):
+        self.model.field.set(10)
+        self.session._store = []
+        self.model.field += 5
+        self.assertEqual(self.session._store, [(('simple',),
+                                                {'field': 15})])
+
     def test_append_rlist(self):
         self.model.scroll.append('one', 'two', 'orc')
         self.assertEqual(self.session._store, [(('simple', 'scroll'),
