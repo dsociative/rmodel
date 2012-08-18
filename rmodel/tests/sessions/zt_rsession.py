@@ -70,6 +70,10 @@ class RSessionTest(TestCase):
         self.assertEqual(self.session._store, [(('simple', 'hash'),
                                                 {'goblin': 'attack'})])
 
+    def test_rhash_clean(self):
+        self.model.hash.clean()
+        self.assertEqual(self.session._store, [(('simple', 'hash'), {})])
+
     def test_rfield_in_stored_item(self):
         item = self.model.store.add()
         item.name.set('Orc?')
@@ -79,6 +83,10 @@ class RSessionTest(TestCase):
     def test_changes(self):
         self.session.add(('simple',), 'test', 'field')
         self.assertEqual(self.session.changes(), {'simple': {'field': 'test'}})
+
+    def test_changes_dict(self):
+        self.session.add(('simple', 'hash'), {})
+        self.assertEqual(self.session.changes(), {'simple': {'hash': {}}})
 
     def test_two_field(self):
         self.session.add(('simple',), 100500, 'power')
@@ -101,5 +109,3 @@ class RSessionTest(TestCase):
         self.assertEqual(self.session.changes(),
                          {'root': {'nested': {'scroll': ['one', 'two',
                                                          'tree']}}})
-
-

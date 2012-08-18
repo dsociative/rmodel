@@ -52,3 +52,4 @@ class BaseBound(RProperty):
     def clean(self, pipe=None, inst=None):
         pipe = pipe or self.redis
         pipe.delete(self.key)
+        self._session.add(self.cursor.items, self.data_default())

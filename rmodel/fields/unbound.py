@@ -1,4 +1,4 @@
-#coding: utf8
+# coding: utf8
 
 
 class Unbound(object):
@@ -21,3 +21,12 @@ class Unbound(object):
         field = self.init(inst, prefix)
         setattr(inst, field.prefix or prefix, field)
         return field
+
+    def __repr__(self):
+        rt = [self.cls.__name__, ]
+
+        default = self.kwargs.get('default')
+        if default is not None:
+            rt.append('default: %s' % default)
+
+        return ', '.join(rt)
