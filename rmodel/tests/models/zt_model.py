@@ -133,18 +133,3 @@ class Test(TestCase):
         self.assertEqual(model.id.get(), 334)
         self.assertEqual(model.name.get(), 'HELLO')
         TestModel.defaults = False
-
-    def test_changes(self):
-        model = TestModel()
-        self.assertEqual(model.changes(), no_changes)
-        model.name.set('new_name')
-        self.assertEqual(model.changes(), {'name': 'new_name'})
-        model.id.set('334')
-        self.assertEqual(model.changes(), {'name': 'new_name', 'id': '334'})
-
-    def test_changes_in_nested_model(self):
-        model = NestedModel()
-        self.assertEqual(model.changes(), no_changes)
-        model.nested.store.set(0)
-
-        self.assertEqual(model.changes(), {'nested': {'store': 0}})

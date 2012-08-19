@@ -3,10 +3,7 @@
 
 class RProperty(object):
 
-    redis_field = True
-
     def __init__(self, _type=str, default=None, prefix=None):
-
         self._default = default
         self.prefix = prefix
         self.type = _type

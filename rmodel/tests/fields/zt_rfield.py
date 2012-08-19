@@ -33,14 +33,3 @@ class RfieldTest(TestCase):
     def test_incr(self):
         self.model.field -= 10
         self.assertEqual(self.model.field.get(), -10)
-
-    def test_changes_set(self):
-        self.model.field.set('123')
-        self.assertEqual(self.model.field.changes(), '123')
-
-    def test_changes_clean(self):
-        self.model.field.set('123')
-        self.model.field.clean()
-        self.assertEqual(self.model.field.changes(), None)
-        self.assertEqual(self.model.changes(), {'field': None})
-

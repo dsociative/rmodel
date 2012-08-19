@@ -3,17 +3,10 @@
 from rmodel.common import dynamic_type
 from rmodel.fields.base import RProperty
 from rmodel.fields.unbound import Unbound
-
-
-def onload(self, inst, field, data):
-    return data
-
-
-def onsave(self, inst, field, data):
-    return data
-
+from rmodel.sessions.base_session import BaseSession
 
 no_changes = {}
+no_session = BaseSession()
 
 
 class BaseBound(RProperty):
@@ -26,15 +19,12 @@ class BaseBound(RProperty):
         else:
             return Unbound(cls, *args, **kwargs)
 
-    def __init__(self, _type=dynamic_type, default=None, prefix=None, inst=None,
-                 onload=onload, onsave=onsave):
+    def __init__(self, _type=dynamic_type, default=None, prefix=None,
+                 inst=None, session=no_session):
         RProperty.__init__(self, _type=_type, default=default, prefix=prefix)
-        self._changes = no_changes
+        self._session = session
         self.assign(inst)
         self.init()
-
-    def changes(self):
-        return self._changes
 
     def data_default(self):
         return self.default

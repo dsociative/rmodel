@@ -1,10 +1,11 @@
 # coding: utf8
 
+from redis.client import Redis
 from rmodel.fields.rfield import rfield
 from rmodel.fields.rhash import rhash
-from redis.client import Redis
-from rmodel.models.runit import RUnit
 from rmodel.models.rstore import RStore
+from rmodel.models.runit import RUnit
+from rmodel.sessions.rsession import RSession
 from unittest2.case import TestCase
 
 
@@ -51,10 +52,29 @@ class RModelStoreTest(TestCase):
     def setUp(self):
         self.redis = Redis()
         self.redis.flushdb()
+        self.session = RSession()
+        self.model = IndexModel(session=self.session)
 
     def test_init(self):
-        model = IndexModel()
-        self.assertIsInstance(model, IndexModel)
+        self.assertIsInstance(self.model, IndexModel)
+
+    def test_session(self):
+        self.assertEqual(self.session, self.model.store._session)
+
+    def test_session_inherit(self):
+        self.assertEqual(self.session, self.model.store.add()._session)
+
+    def test_session_override_get(self):
+        session = RSession()
+        self.model.store.set(1)
+        self.assertEqual(session, self.model.store.get(1, session)._session)
+
+    def test_session_override_add_set(self):
+        session = RSession()
+        self.assertEqual(session,
+                         self.model.store.add(session=session)._session)
+        self.assertEqual(session,
+                         self.model.store.set(2, session=session)._session)
 
     def test_addModel(self):
         model = IndexModel()
@@ -154,7 +174,7 @@ class RModelStoreTest(TestCase):
 
     def test_custom_new_with_args(self):
         model = NewTestModel()
-        item = model.add('test_values')
+        item = model.add(args=('test_values',))
         self.assertEqual(item.field.get(), 'test_values')
-        item = model.set('test', 'somthing_else')
+        item = model.set('test', args=('somthing_else',))
         self.assertEqual(item.field.get(), 'somthing_else')

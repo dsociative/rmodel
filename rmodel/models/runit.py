@@ -3,7 +3,7 @@
 from redis.client import Redis
 from rmodel.common import Run
 from rmodel.cursor import Cursor
-from rmodel.fields.base_bound import BaseBound, no_changes
+from rmodel.fields.base_bound import BaseBound, no_changes, no_session
 
 
 class RUnit(BaseBound):
@@ -21,7 +21,8 @@ class RUnit(BaseBound):
                 yield name, field
 
     @Run('init')
-    def __init__(self, prefix=None, inst=None):
+    def __init__(self, prefix=None, inst=None, session=no_session):
+        self._session = session
         self.class_fields = dict(self.fields_gen())
         if prefix is not None:
             self.prefix = str(prefix)
@@ -40,12 +41,6 @@ class RUnit(BaseBound):
 
     def fields(self):
         return self._fields
-
-    @classmethod
-    def bound(cls, inst, prefix):
-        field = cls(inst.cursor, prefix, inst=inst)
-        setattr(inst, field.prefix, field)
-        return field
 
     def typer(self, value):
         return value
@@ -106,4 +101,3 @@ class RUnit(BaseBound):
 
     def init(self):
         pass
-

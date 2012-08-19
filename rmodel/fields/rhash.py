@@ -39,6 +39,7 @@ class rhash(BaseBound):
         return key
 
     def set(self, field, value):
+        self._session.add(self.cursor.items, value, field)
         return self.redis.hset(self.key, field, self.onsave(field, value))
 
     def get(self, field):

@@ -1,6 +1,7 @@
 # coding: utf8
 
-from rmodel.common import Run, ProxyRun
+from rmodel.common import Run
+from rmodel.fields.base_bound import no_session
 from rmodel.models.runit import RUnit
 
 
@@ -10,8 +11,8 @@ class RStore(RUnit):
     INCR_KEY = '_INCR'
 
     @Run('init')
-    def __init__(self, prefix=None, inst=None):
-        RUnit.__init__(self, prefix=prefix, inst=inst)
+    def __init__(self, prefix=None, inst=None, session=no_session):
+        super(RStore, self).__init__(prefix, inst, session)
         self._key_cursor = self.cursor.new(self.KEY)
 
     def __contains__(self, prefix):
@@ -49,20 +50,23 @@ class RStore(RUnit):
         self.set(end)
         self.redis.rename(self.cursor.new(start).key, self.cursor.new(end).key)
 
-    def init_model(self, prefix):
-        return self.assign(prefix=prefix, inst=self)
+    def init_model(self, prefix, session=None):
+        if session is None:
+            session = self._session
 
-    def add(self, *args, **kwargs):
-        return self.set(self.new_key(), *args, **kwargs)
+        return self.assign(prefix=prefix, inst=self, session=session)
 
-    def get(self, prefix):
+    def add(self, args=(), session=None):
+        return self.set(self.new_key(), args, session=session)
+
+    def get(self, prefix, session=None):
         if prefix in self:
-            return self.init_model(prefix)
+            return self.init_model(prefix, session)
 
-    def set(self, prefix, *args, **kwargs):
+    def set(self, prefix, args=(), session=None):
         self.redis.hset(self._key_cursor.key, prefix, self.KEY)
-        model = self.init_model(prefix)
-        model.new(*args, **kwargs)
+        model = self.init_model(prefix, session=session)
+        model.new(*args)
         return model
 
     def new_key(self):

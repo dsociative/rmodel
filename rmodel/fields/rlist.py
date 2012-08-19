@@ -36,6 +36,7 @@ class rlist(BaseBound):
 
         Добавляет новую запись в список
         '''
+        self._session.add(self.cursor.items, list(values))
         return self.redis.rpush(self.key, *self.onsave(values))
 
     def process_result(self, rt):

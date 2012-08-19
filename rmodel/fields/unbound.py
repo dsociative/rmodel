@@ -13,6 +13,7 @@ class Unbound(object):
     def init(self, inst=None, prefix=''):
         self.kwargs['inst'] = inst
         self.kwargs['prefix'] = prefix
+        self.kwargs['session'] = inst._session
 
         return self.cls(*self.args, **self.kwargs)
 
