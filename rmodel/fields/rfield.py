@@ -32,10 +32,12 @@ class rfield(BaseBound):
         value = self.redis.hincrby(self.cursor.key, self.prefix,
                                    self.onincr(value))
         self._session.add(self.cursor.items, value, self.prefix)
-        return self
+        return value
 
     def __isub__(self, value):
-        return self.incr(-value)
+        self.incr(-value)
+        return self
 
     def __iadd__(self, value):
-        return self.incr(value)
+        self.incr(value)
+        return self
