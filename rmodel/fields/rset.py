@@ -8,6 +8,20 @@ class rset(BaseBound):
     Redis sets field http://redis.io/commands#set
     '''
 
+    def __len__(self):
+        '''
+        Get the number of members in a set
+        http://redis.io/commands/scard
+        '''
+        return self.redis.scard(self.key)
+
+    def __contains__(self, name):
+        '''
+        Determine if a given value is a member of a set
+        http://redis.io/commands/sismember
+        '''
+        return self.redis.sismember(self.key, name)
+
     def data_default(self):
         return []
 
@@ -33,13 +47,6 @@ class rset(BaseBound):
         http://redis.io/commands/spop
         '''
         return self.redis.spop(self.key)
-
-    def __len__(self):
-        '''
-        Get the number of members in a set
-        http://redis.io/commands/scard
-        '''
-        return self.redis.scard(self.key)
 
     def remove(self, key):
         '''

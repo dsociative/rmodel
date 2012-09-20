@@ -58,3 +58,8 @@ class Test(TestCase):
         self.assertEqual(len(self.field), 1)
         self.field.append('name2')
         self.assertEqual(len(self.field), 2)
+
+    def test_contents(self):
+        self.assertFalse('name' in self.field)
+        self.field.append('name')
+        self.assertTrue('name' in self.field)
