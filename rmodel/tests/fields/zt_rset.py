@@ -51,3 +51,10 @@ class Test(TestCase):
         self.assertEqual(self.field.remove('name'), 1)
         self.assertEqual(self.field.data(), [])
 
+    def test_len(self):
+        self.assertEqual(len(self.field), 0)
+        self.field.append('name')
+        self.field.append('name')
+        self.assertEqual(len(self.field), 1)
+        self.field.append('name2')
+        self.assertEqual(len(self.field), 2)

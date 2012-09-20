@@ -34,6 +34,13 @@ class rset(BaseBound):
         '''
         return self.redis.spop(self.key)
 
+    def __len__(self):
+        '''
+        Get the number of members in a set
+        http://redis.io/commands/scard
+        '''
+        return self.redis.scard(self.key)
+
     def remove(self, key):
         '''
         :param key: to remove from set
