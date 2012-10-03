@@ -45,7 +45,7 @@ class rlist(BaseBound):
     def __len__(self):
         return self.redis.llen(self.key)
 
-    def range(self, frm=0, to= -1):
+    def range(self, frm=0, to=-1):
         '''
         :param frm: Начальная позиция выборки
         :type frm: int
@@ -73,3 +73,6 @@ class rlist(BaseBound):
 
     def pop(self):
         return self.redis.lpop(self.key)
+
+    def by_index(self, index):
+        return self.redis.lindex(self.key, index)

@@ -68,6 +68,13 @@ class Test(TestCase):
         self.model.names.remove('not_in_redis_key')
         self.assertEqual(self.model.names.data(), ['test'])
 
+    def test_by_index(self):
+        self.assertEqual(self.field.by_index('hello'), None)
+        self.field.append('hello')
+        self.assertEqual(self.field.by_index(0), 'hello')
+        self.field.append('next')
+        self.assertEqual(self.field.by_index(1), 'next')
+
     def test_contains_false(self):
         self.assertEqual('hello' in self.model.names, False)
 
