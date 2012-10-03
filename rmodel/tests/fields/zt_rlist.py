@@ -68,6 +68,13 @@ class Test(TestCase):
         self.model.names.remove('not_in_redis_key')
         self.assertEqual(self.model.names.data(), ['test'])
 
+    def test_remove_similar(self):
+        for _ in xrange(2):
+            self.field.append('value')
+
+        self.field.remove('value', 1)
+        self.assertEqual(self.field.data(), ['value'])
+
     def test_by_index(self):
         self.assertEqual(self.field.by_index('hello'), None)
         self.field.append('hello')

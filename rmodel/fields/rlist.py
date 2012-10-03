@@ -65,11 +65,11 @@ class rlist(BaseBound):
         self.clean()
         self.append(*values)
 
-    def remove(self, value):
+    def remove(self, value, count=0):
         '''
-        :param value: value that must be removed
+        http://redis.io/commands/lrem
         '''
-        return self.redis.lrem(self.key, value)
+        return self.redis.lrem(self.key, value, count)
 
     def pop(self):
         return self.redis.lpop(self.key)
