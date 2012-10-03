@@ -23,7 +23,7 @@ class rlist(BaseBound):
         value = redis.lrange(self.key, 0, -1)
 
         if not pipe:
-            return [self.typer(i) for i in value]
+            return self.process_result(value)
         else:
             return value
 
@@ -40,7 +40,7 @@ class rlist(BaseBound):
         return self.redis.rpush(self.key, *self.onsave(values))
 
     def process_result(self, rt):
-        return [self.type(i) for i in rt]
+        return [self.typer(i) for i in rt]
 
     def __len__(self):
         return self.redis.llen(self.key)
@@ -74,5 +74,8 @@ class rlist(BaseBound):
     def pop(self):
         return self.redis.lpop(self.key)
 
+    def trim(self, frm, to):
+        return self.redis.ltrim(self.key, frm, to)
+
     def by_index(self, index):
-        return self.redis.lindex(self.key, index)
+        return self.typer(self.redis.lindex(self.key, index))

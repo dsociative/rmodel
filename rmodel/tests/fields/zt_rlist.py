@@ -74,6 +74,15 @@ class Test(TestCase):
         self.assertEqual(self.field.by_index(0), 'hello')
         self.field.append('next')
         self.assertEqual(self.field.by_index(1), 'next')
+        self.field.append(2)
+        self.assertEqual(self.field.by_index(2), 2)
+
+    def test_trim(self):
+        self.field.append(*xrange(10))
+        self.field.trim(1, 12)
+        self.assertEqual(self.field.data(), list(xrange(1, 10)))
+        self.field.trim(0, 0)
+        self.assertEqual(self.field.data(), [1])
 
     def test_contains_false(self):
         self.assertEqual('hello' in self.model.names, False)
