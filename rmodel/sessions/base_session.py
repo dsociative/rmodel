@@ -4,4 +4,7 @@
 class BaseSession(object):
 
     def add(self, items, value, field=None):
-        ''' override it '''
+        ''' pattern method '''
+
+    def append(self, items, values, end):
+        ''' pattern method '''

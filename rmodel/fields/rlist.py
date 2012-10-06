@@ -27,6 +27,9 @@ class rlist(BaseBound):
         else:
             return value
 
+    def __push(self, values):
+        return self.redis.rpush(self.key, *self.onsave(values))
+
     def append(self, *values):
         '''
         :param name: имя поля
@@ -36,8 +39,8 @@ class rlist(BaseBound):
 
         Добавляет новую запись в список
         '''
-        self._session.add(self.cursor.items, list(values))
-        return self.redis.rpush(self.key, *self.onsave(values))
+        return self._session.append(self.cursor.items, values,
+                                    self.__push(values))
 
     def process_result(self, rt):
         return [self.typer(i) for i in rt]
@@ -62,8 +65,9 @@ class rlist(BaseBound):
         :param values: iterable values
         Clean and append new values
         '''
-        self.clean()
-        self.append(*values)
+        self.redis.delete(self.key)
+        self.__push(values)
+        self._session.add(self.cursor.items, values)
 
     def remove(self, value, count=0):
         '''

@@ -14,6 +14,10 @@ class RSession(BaseSession):
 
         self._store.append((items, value))
 
+    def append(self, items, values, end):
+        keys = xrange(end - len(values), end)
+        self._store.append((items, dict(zip(keys, values))))
+
     def _get_nested(self, store, path):
         d = store
         for item in path:

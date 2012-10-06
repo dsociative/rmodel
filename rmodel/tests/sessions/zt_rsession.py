@@ -70,7 +70,12 @@ class RSessionTest(TestCase):
     def test_append_rlist(self):
         self.model.scroll.append('one', 'two', 'orc')
         self.assertEqual(self.session._store, [(('simple', 'scroll'),
-                                    ['one', 'two', 'orc'])])
+                                    {0: 'one', 1: 'two', 2: 'orc'})])
+
+    def test_rlist_set(self):
+        self.model.scroll.set(['one', 'two'])
+        self.assertEqual(self.session._store, [(('simple', 'scroll'),
+                                                ['one', 'two'])])
 
     def test_rhash_set(self):
         self.model.hash.set('goblin', 'attack')
@@ -116,3 +121,18 @@ class RSessionTest(TestCase):
         self.assertEqual(self.session.changes(),
                          {'root': {'nested': {'scroll': ['one', 'two',
                                                          'tree']}}})
+
+    def test_none_changes(self):
+        self.session.add(('model', 'nested'), None, '1')
+        self.assertEqual(self.session.changes(),
+                         {'model': {'nested': {'1': None}}})
+
+    def test_append(self):
+        self.session.append(('list',), ['value'], 1)
+        self.assertEqual(self.session.changes(), {'list': {0: 'value'}})
+
+    def test_append_many(self):
+        self.session.append(('list',), ['value1', 'value2', 'value3'], 6)
+        self.assertEqual(self.session.changes(), {'list': {3: 'value1',
+                                                           4: 'value2',
+                                                           5: 'value3'}})

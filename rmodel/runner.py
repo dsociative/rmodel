@@ -20,11 +20,10 @@ if __name__ == '__main__':
 
     loader = unittest2.TestLoader()
     suites = loader.discover('./', pattern='zt_*.py')
-    for suite in suites:
-        result = runner.run(suite)
-        errors += len(result.errors)
-        fails += len(result.failures)
-        count += suite.countTestCases()
+    result = runner.run(suites)
+    errors += len(result.errors)
+    fails += len(result.failures)
+    count += suites.countTestCases()
 
     if errors or fails:
         sys.exit(1)
