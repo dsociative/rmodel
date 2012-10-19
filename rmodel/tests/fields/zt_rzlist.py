@@ -1,6 +1,6 @@
 #coding: utf8
-from fields.rfield import rfield
-from fields.rzlist import rzlist
+from rmodel.fields.rfield import rfield
+from rmodel.fields.rzlist import rzlist
 from redis.client import Redis
 from rmodel.models.runit import RUnit
 from unittest2.case import TestCase
@@ -59,7 +59,10 @@ class Test(TestCase):
         self.assertEqual(self.field.range(1, 2, withscores=True),
             [('fields1', 1.0), ('fields2', 2.0)])
 
-
-
-
-
+    def test_set(self):
+        self.field.set('name', 1)
+        self.assertEqual(self.field.data(), [('name', 1)])
+        self.field.set('name', 5)
+        self.assertEqual(self.field.data(), [('name', 5)])
+        self.field.set('else')
+        self.assertEqual(self.field.data(), [('else', 0), ('name', 5)])
