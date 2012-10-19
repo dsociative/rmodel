@@ -1,6 +1,6 @@
 # coding: utf8
 
-from fields.base_bound import BaseBound
+from rmodel.fields.base_bound import BaseBound
 
 
 class rzlist(BaseBound):
