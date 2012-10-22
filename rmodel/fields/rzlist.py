@@ -33,6 +33,9 @@ class rzlist(BaseBound):
     def revrange(self, frm=0, to=-1, withscores=False):
         return self.redis.zrevrange(self.key, frm, to, withscores)
 
+    def revrank(self, name):
+        return self.redis.zrevrank(self.key, name)
+
     def range(self, frm=0, to=-1, withscores=False,
               byscore=False):
 

@@ -71,3 +71,8 @@ class Test(TestCase):
         self.field.add('name1', 1)
         self.field.add('name2', 2)
         self.assertEqual(self.field.revrange(), ['name2', 'name1'])
+
+    def test_revrank(self):
+        for i in xrange(5):
+            self.field.add(str(i), i)
+        self.assertEqual(self.field.revrank('3'), 1)
