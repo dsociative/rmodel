@@ -30,6 +30,9 @@ class rzlist(BaseBound):
     def incr(self, name, incr_by=1):
         return self.redis.zincrby(self.key, name, incr_by)
 
+    def revrange(self, frm=0, to=-1, withscores=False):
+        return self.redis.zrevrange(self.key, frm, to, withscores)
+
     def range(self, frm=0, to=-1, withscores=False,
               byscore=False):
 

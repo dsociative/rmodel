@@ -66,3 +66,8 @@ class Test(TestCase):
         self.assertEqual(self.field.data(), [('name', 5)])
         self.field.set('else')
         self.assertEqual(self.field.data(), [('else', 0), ('name', 5)])
+
+    def test_revrange(self):
+        self.field.add('name1', 1)
+        self.field.add('name2', 2)
+        self.assertEqual(self.field.revrange(), ['name2', 'name1'])
