@@ -1,9 +1,8 @@
 # coding: utf8
+from rmodel.fields.base_field import BaseField
 
-from rmodel.fields.base_bound import BaseBound
 
-
-class rhash(BaseBound):
+class rhash(BaseField):
 
     def __len__(self):
         return self.redis.hlen(self.key)

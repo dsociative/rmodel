@@ -1,12 +1,13 @@
 #coding: utf8
-
 from redis.client import Redis
+
 from rmodel.common import Run
 from rmodel.cursor import Cursor
-from rmodel.fields.base_bound import BaseBound, no_changes, no_session
+from rmodel.fields.base_field import no_session
+from rmodel.models.base_model import BaseModel
 
 
-class RUnit(BaseBound):
+class RUnit(BaseModel):
 
     defaults = False
 

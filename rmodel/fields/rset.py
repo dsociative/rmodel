@@ -1,9 +1,8 @@
 # coding: utf8
+from rmodel.fields.base_field import BaseField
 
-from rmodel.fields.base_bound import BaseBound
 
-
-class rset(BaseBound):
+class rset(BaseField):
     '''
     Redis sets field http://redis.io/commands#set
     '''

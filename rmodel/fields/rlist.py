@@ -1,9 +1,8 @@
 # coding: utf8
+from rmodel.fields.base_field import BaseField
 
-from rmodel.fields.base_bound import BaseBound
 
-
-class rlist(BaseBound):
+class rlist(BaseField):
     '''
     Поле для работы со списками
     '''

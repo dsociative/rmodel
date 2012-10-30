@@ -1,9 +1,8 @@
 # coding: utf8
+from rmodel.fields.base_field import BaseField
 
-from rmodel.fields.base_bound import BaseBound
 
-
-class rfield(BaseBound):
+class rfield(BaseField):
 
     def assign(self, inst):
         self.cursor = inst.cursor

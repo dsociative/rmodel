@@ -1,7 +1,7 @@
 # coding: utf8
 
 from rmodel.common import Run
-from rmodel.fields.base_bound import no_session
+from rmodel.fields.base_field import no_session
 from rmodel.models.runit import RUnit
 
 

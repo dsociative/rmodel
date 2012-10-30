@@ -1,12 +1,7 @@
 # coding: utf8
-
-from rmodel.common import dynamic_type
 from rmodel.fields.base import RProperty
 from rmodel.fields.unbound import Unbound
 from rmodel.sessions.base_session import BaseSession
-
-no_changes = {}
-no_session = BaseSession()
 
 
 class BaseBound(RProperty):
@@ -19,32 +14,7 @@ class BaseBound(RProperty):
         else:
             return Unbound(cls, *args, **kwargs)
 
-    def __init__(self, _type=dynamic_type, default=None, prefix=None,
-                 inst=None, session=no_session):
-        RProperty.__init__(self, _type=_type, default=default, prefix=prefix)
-        self._session = session
-        self.assign(inst)
-        self.init()
-
-    def data_default(self):
-        return self.default
-
-    def fields(self):
-        pass
-
-    def process_data(self, values):
-        value = values.pop(0)
-
-        if not value:
-            return self.data_default()
-        else:
-            return self.process_result(value)
-
-    def onsave(self, value):
-        return value
-
-    def onload(self, value):
-        return value
+    # Model and Field usage
 
     def init(self):
         pass
@@ -53,3 +23,14 @@ class BaseBound(RProperty):
         pipe = pipe or self.redis
         pipe.delete(self.key)
         self._session.add(self.cursor.items, self.data_default())
+
+    def data_default(self):
+        return self.default
+
+    def process_data(self, values):
+        value = values.pop(0)
+
+        if not value:
+            return self.data_default()
+        else:
+            return self.process_result(value)

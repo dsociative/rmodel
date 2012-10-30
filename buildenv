@@ -1,0 +1,13 @@
+#!/bin/bash
+
+echo Creating environment
+virtualenv .env
+
+echo Install PIP inside virtual environment
+./.env/bin/easy_install pip
+
+echo Activate virtual env
+source ./.env/bin/activate
+
+echo Installing dependencies
+./.env/bin/pip install --download-cache ~/pip -r ./requirements.txt

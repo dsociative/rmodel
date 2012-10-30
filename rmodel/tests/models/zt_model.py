@@ -2,7 +2,6 @@
 
 from redis.client import Redis
 from rmodel.cursor import Cursor
-from rmodel.fields.base_bound import no_changes
 from rmodel.fields.rfield import rfield
 from rmodel.models.runit import RUnit
 from unittest2.case import TestCase
