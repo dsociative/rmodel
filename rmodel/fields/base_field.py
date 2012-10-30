@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from rmodel.common import dynamic_type
-from rmodel.fields.base import RProperty
 from rmodel.fields.unbound import Unbound
 from rmodel.sessions.base_session import BaseSession
 

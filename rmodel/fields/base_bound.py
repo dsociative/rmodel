@@ -1,16 +1,15 @@
 # coding: utf8
-from rmodel.fields.base import RProperty
 from rmodel.fields.unbound import Unbound
 from rmodel.sessions.base_session import BaseSession
 
 
-class BaseBound(RProperty):
+class BaseBound(object):
 
     root = False
 
     def __new__(cls, *args, **kwargs):
         if 'inst' in kwargs or cls.root:
-            return super(RProperty, cls).__new__(cls, *args, **kwargs)
+            return super(BaseBound, cls).__new__(cls, *args, **kwargs)
         else:
             return Unbound(cls, *args, **kwargs)
 
