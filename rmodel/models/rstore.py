@@ -1,16 +1,13 @@
 # coding: utf8
-
-from rmodel.common import Run
-from rmodel.fields.base_field import no_session
+from rmodel.models.base_model import BaseModel
 from rmodel.models.runit import RUnit
 
 
-class RStore(RUnit):
+class RStore(BaseModel):
 
     KEY = '_KEY'
     INCR_KEY = '_INCR'
 
-    @Run('init')
     def __init__(self, *args, **kwargs):
         super(RStore, self).__init__(*args, **kwargs)
         self._key_cursor = self.cursor.new(self.KEY)
@@ -83,7 +80,7 @@ class RStore(RUnit):
             self.delete_key(prefix)
 
     def clean(self, pipe, inst):
-        RUnit.clean(self, pipe, inst)
+        super(RStore, self).clean(pipe, inst)
 
         pipe.delete(self.cursor.key)
         pipe.delete(self._key_cursor.key)

@@ -49,7 +49,7 @@ class Test(TestCase):
     def setUp(self):
         self.redis = Redis()
         self.redis.flushdb()
-        self.model = TestModel(redis=self.redis)
+        self.model = TestModel(self.redis)
 
     def test_init(self):
         self.assertTrue(isinstance(self.model.cursor, Cursor))

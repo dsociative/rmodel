@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
 from rmodel.base_bound import BaseBound
 from rmodel.common import dynamic_type
-from rmodel.sessions.base_session import BaseSession
-
-
-no_session = BaseSession()
 
 
 class BaseField(BaseBound):
@@ -47,3 +43,19 @@ class BaseField(BaseBound):
             return self._default
         elif self.instance.defaults:
             return self.instance.defaults.get(self.prefix)
+
+    def process_data(self, values):
+        value = values.pop(0)
+
+        if not value:
+            return self.data_default()
+        else:
+            return self.process_result(value)
+
+    def clean(self, pipe=None, inst=None):
+        pipe = pipe or self.redis
+        pipe.delete(self.key)
+        self._session.add(self.cursor.items, self.data_default())
+
+    def data_default(self):
+        return self.default
