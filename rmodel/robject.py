@@ -1,19 +1,9 @@
-# coding: utf8
-from rmodel.fields.unbound import Unbound
-from rmodel.sessions.base_session import BaseSession
+# -*- coding: utf-8 -*-
 
 
-class BaseBound(object):
+class RObject(object):
 
     root = False
-
-    def __new__(cls, *args, **kwargs):
-        if 'inst' in kwargs or cls.root:
-            return super(BaseBound, cls).__new__(cls, *args, **kwargs)
-        else:
-            return Unbound(cls, *args, **kwargs)
-
-    # Model and Field usage
 
     def init(self):
         pass
