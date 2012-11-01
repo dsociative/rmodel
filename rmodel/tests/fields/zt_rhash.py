@@ -1,54 +1,34 @@
 #coding: utf8
-
-from fields.rhash import rhash
-from redis.client import Redis
+from rmodel.fields.rhash import rhash
 from rmodel.fields.unbound import Unbound
-from rmodel.models.runit import RUnit
-from unittest2.case import TestCase
+from rmodel.tests.base_test import BaseTest
+from rmodel.tests.base_test import TModel
 
 
-class TModel(RUnit):
-    prefix = 'model'
-    root = True
-    hash = rhash(int)
-
-
-class FModel(RUnit):
-    root = True
-    prefix = 'model'
-
-
-class Test(TestCase):
+class RHashTest(BaseTest):
 
     def setUp(self):
-        self.redis = Redis()
-        self.redis.flushdb()
+        super(RHashTest, self).setUp()
+        self.unbound = rhash(int, 0)
+        self.model.init_fields((('hash', self.unbound),))
 
-    def test_init(self):
-        model = TModel()
-
-        unbound_field = rhash(int, 0)
+    def test_unbound(self):
         self.assertIsInstance(rhash('test', int, 0), Unbound)
+        self.assertIsInstance(self.unbound, Unbound)
 
-        self.assertIsInstance(unbound_field, Unbound)
-        bound_field = unbound_field.bound(model, 'test')
-
+    def test_bound(self):
+        bound_field = self.unbound.bound(self.model, 'test')
         self.assertIsInstance(bound_field, rhash)
-        self.assertIsInstance(rhash('test', int, 0), Unbound)
 
         bound_field['q'] = 1
         self.assertEqual(bound_field.data(), {'q': 1})
         self.assertEqual(bound_field.prefix, 'test')
 
     def test_two_model(self):
-        model1 = TModel(prefix='1')
-        model2 = TModel(prefix='2')
+        model2 = TModel(prefix='2', redis=self.redis)
+        model2.init_fields([('hash', self.unbound)])
 
         model2.hash['1'] = 1
 
-        self.assertDictEqual(model1.data(), {'hash':{}})
-        self.assertDictEqual(model2.data(), {'hash':{'1': 1}})
-
-
-
-
+        self.eq(self.model.data(), {'hash': {}})
+        self.eq(model2.data(), {'hash': {'1': 1}})

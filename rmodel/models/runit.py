@@ -10,8 +10,6 @@ from rmodel.models.base_model import BaseModel
 class RUnit(BaseModel):
 
     defaults = False
-
-    redis = Redis()
     prefix = ''
 
     @classmethod
@@ -22,9 +20,10 @@ class RUnit(BaseModel):
                 yield name, field
 
     @Run('init')
-    def __init__(self, prefix=None, inst=None, session=no_session):
+    def __init__(self, prefix=None, inst=None, session=no_session, redis=None):
+        # super(RUnit, self).__init__(prefix=None, inst=None, session=no_session)
+        self.redis = redis
         self._session = session
-        self.class_fields = dict(self.fields_gen())
         if prefix is not None:
             self.prefix = str(prefix)
 
@@ -33,12 +32,13 @@ class RUnit(BaseModel):
         else:
             self.cursor = Cursor(self.prefix)
 
-        self._fields = tuple(self.init_fields())
+        self._fields = []
+        self.init_fields(self.fields_gen())
         self.instance = inst
 
-    def init_fields(self):
-        for name, field in self.class_fields.items():
-            yield field.bound(self, name)
+    def init_fields(self, fields):
+        for name, field in fields:
+            self._fields.append(field.bound(self, name))
 
     def fields(self):
         return self._fields

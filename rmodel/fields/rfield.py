@@ -7,7 +7,6 @@ class rfield(BaseField):
     def assign(self, inst):
         self.cursor = inst.cursor
         self.instance = inst
-        self.redis = inst.redis
 
     def clean(self, pipe=None, inst=None):
         pipe = pipe or self.redis
@@ -19,7 +18,8 @@ class rfield(BaseField):
 
     def set(self, value):
         self._session.add(self.cursor.items, value, field=self.prefix)
-        return self.redis.hset(self.cursor.key, self.prefix, self.onsave(value))
+        return self.redis.hset(self.cursor.key, self.prefix,
+                               self.onsave(value))
 
     def get(self):
         return self.process_result(self.data(self.redis, self.cursor.key))

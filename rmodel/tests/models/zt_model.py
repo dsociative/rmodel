@@ -25,6 +25,7 @@ class StoreModel(RUnit):
 class NestedModel(TestModel):
 
     prefix = 'nested'
+    name = rfield()
     nested = StoreModel()
 
 incr_value = 0
@@ -48,16 +49,15 @@ class Test(TestCase):
     def setUp(self):
         self.redis = Redis()
         self.redis.flushdb()
+        self.model = TestModel(redis=self.redis)
 
     def test_init(self):
-        model = TestModel()
-        self.assertTrue(isinstance(model.cursor, Cursor))
+        self.assertTrue(isinstance(self.model.cursor, Cursor))
 
     def test_incr(self):
         global incr_value
 
-        model = ModelWithIncr()
-        model.id = 0
+        model = ModelWithIncr(redis=self.redis)
 
         self.assertEqual(model.incr_field.get(), 0)
         model.incr_field += 1
@@ -73,42 +73,38 @@ class Test(TestCase):
         self.assertEqual(model.incr_field.get(), 10)
 
     def test_simple(self):
-        model = TestModel()
+        self.assertEqual(self.model.id.get(), None)
+        self.assertEqual(self.model.name.get(), None)
 
-        self.assertEqual(model.id.get(), None)
-        self.assertEqual(model.name.get(), None)
+        self.model.id.set(1)
+        self.assertEqual(self.model.id.get(), 1)
+        self.model.name.set('test_name')
+        self.model = TestModel(redis=self.redis)
 
-        model.id.set(1)
-        self.assertEqual(model.id.get(), 1)
-        model.name.set('test_name')
-        model = TestModel()
-
-        self.assertEqual(model.id.get(), 1)
-        self.assertEqual(model.name.get(), 'test_name')
-        self.assertEqual(model.data(), {'id': 1, 'name': 'test_name'})
+        self.assertEqual(self.model.id.get(), 1)
+        self.assertEqual(self.model.name.get(), 'test_name')
+        self.assertEqual(self.model.data(), {'id': 1, 'name': 'test_name'})
 
     def test_data(self):
-        model = TestModel()
+        self.model.id.set(1)
+        self.model.name.set('test_name')
 
-        model.id.set(1)
-        model.name.set('test_name')
+        self.assertEqual(self.model.id.get(), 1)
+        self.assertEqual(self.model.name.get(), 'test_name')
 
-        self.assertEqual(model.id.get(), 1)
-        self.assertEqual(model.name.get(), 'test_name')
-
-        self.assertEqual(model.data(), {'id': 1, 'name': 'test_name'})
+        self.assertEqual(self.model.data(), {'id': 1, 'name': 'test_name'})
 
     def test_nested_model(self):
-        model = NestedModel()
+        model = NestedModel(redis=self.redis)
         self.assertEqual(len(model.fields()), 3)
         model.nested.store.set(1)
         self.assertEqual(model.nested.store.get(), 1)
-        self.assertDictEqual(model.data(),
-                         {'nested': {'store': 1},
-                          'id': None, 'name': None})
+        self.assertDictEqual(model.data(), {'nested': {'store': 1},
+                                            'id': None, 'name': None})
 
     def test_cross_model(self):
-        one, two = NestedModel(prefix=1), NestedModel(prefix=2)
+        one, two = (NestedModel(prefix=1, redis=self.redis),
+                    NestedModel(prefix=2, redis=self.redis))
         self.assertEqual(one.cursor.key, '1')
         self.assertEqual(two.cursor.key, '2')
 
@@ -126,9 +122,31 @@ class Test(TestCase):
         self.assertEqual(two.nested.store.get(), 2)
 
     def test_defaults(self):
-        model = TestModel()
         TestModel.defaults = {'id': 334, 'name': 'HELLO'}
 
-        self.assertEqual(model.id.get(), 334)
-        self.assertEqual(model.name.get(), 'HELLO')
+        self.assertEqual(self.model.id.get(), 334)
+        self.assertEqual(self.model.name.get(), 'HELLO')
         TestModel.defaults = False
+
+
+class RootDBInitTest(TestCase):
+
+    def setUp(self):
+        self.model = NestedModel
+        self.model.root = True
+        self.redis = Redis()
+        self.model = self.model(redis=self.redis)
+
+    def test_init(self):
+        self.assertEqual(self.model.redis, self.redis)
+
+    def test_field(self):
+        self.assertEqual(self.model.name.redis, self.redis)
+
+    def test_nested_init(self):
+        self.assertEqual(self.model.nested.redis, self.redis)
+
+    def test_nested_field(self):
+        self.assertEqual(self.model.nested.store.redis, self.redis)
+
+        

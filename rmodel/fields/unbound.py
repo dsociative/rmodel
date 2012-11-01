@@ -14,6 +14,7 @@ class Unbound(object):
         self.kwargs['inst'] = inst
         self.kwargs['prefix'] = prefix
         self.kwargs['session'] = inst._session
+        self.kwargs['redis'] = inst.redis
 
         return self.cls(*self.args, **self.kwargs)
 

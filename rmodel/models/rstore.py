@@ -11,8 +11,8 @@ class RStore(RUnit):
     INCR_KEY = '_INCR'
 
     @Run('init')
-    def __init__(self, prefix=None, inst=None, session=no_session):
-        super(RStore, self).__init__(prefix, inst, session)
+    def __init__(self, *args, **kwargs):
+        super(RStore, self).__init__(*args, **kwargs)
         self._key_cursor = self.cursor.new(self.KEY)
 
     def __contains__(self, prefix):
@@ -54,7 +54,8 @@ class RStore(RUnit):
         if session is None:
             session = self._session
 
-        return self.assign(prefix=prefix, inst=self, session=session)
+        return self.assign(prefix=prefix, inst=self, session=session,
+                           redis=self.redis)
 
     def add(self, args=(), session=None):
         return self.set(self.new_key(), args, session=session)

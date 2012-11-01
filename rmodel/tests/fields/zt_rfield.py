@@ -1,33 +1,19 @@
 #coding: utf8
-
-from redis.client import Redis
 from rmodel.fields.rfield import rfield
 from rmodel.models.runit import RUnit
-from unittest2.case import TestCase
+from rmodel.tests.base_test import BaseTest
 
 
-class TModel(RUnit):
-    prefix = 'model'
-    root = True
-
-    field = rfield(int, 0)
-
-
-class FModel(RUnit):
-
-    prefix = 'model'
-
-
-class RfieldTest(TestCase):
+class RfieldTest(BaseTest):
 
     def setUp(self):
-        self.redis = Redis()
-        self.redis.flushdb()
-        self.model = TModel()
+        super(RfieldTest, self).setUp()
+        self.unbound = rfield(int, 0)
+        self.unbound.bound(self.model, 'field')
 
     def test_init(self):
-        self.assertEqual(self.model.field.get(), 0)
+        self.eq(self.model.field.get(), 0)
 
     def test_incr(self):
         self.model.field -= 10
-        self.assertEqual(self.model.field.get(), -10)
+        self.eq(self.model.field.get(), -10)

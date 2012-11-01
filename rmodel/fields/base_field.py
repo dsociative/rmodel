@@ -10,11 +10,12 @@ no_session = BaseSession()
 class BaseField(BaseBound):
 
     def __init__(self, _type=dynamic_type, default=None, prefix=None,
-                 inst=None, session=None):
+                 inst=None, session=None, redis=None):
 
         self._default = default
         self.prefix = prefix
         self.type = _type
+        self.redis = redis
 
         self._session = session
         self.assign(inst)
@@ -30,7 +31,6 @@ class BaseField(BaseBound):
         self.cursor = inst.cursor.new(self.prefix)
         self.key = self.cursor.key
         self.instance = inst
-        self.redis = inst.redis
 
     def typer(self, value):
         if value is not None:
