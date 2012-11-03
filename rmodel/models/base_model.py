@@ -47,7 +47,7 @@ class BaseModel(BaseBound):
         for name, field in fields:
             self._fields.append(field.bound(self, name))
 
-    def data(self, pipe=None, key=None):
+    def data(self, pipe=None):
         child = True
 
         if not pipe:
@@ -55,7 +55,7 @@ class BaseModel(BaseBound):
             pipe = self.redis.pipeline()
 
         for field in self.fields():
-            field.data(pipe, key=self.cursor.key)
+            field.data(pipe)
 
         if not child:
             values = map(self.typer, pipe.execute())
