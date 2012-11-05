@@ -17,14 +17,10 @@ class rlist(BaseField):
         '''
         :returns: ['item1', 'item2']
         '''
+        return self.process_result(self.collect_data(self.redis))
 
-        redis = pipe or self.redis
-        value = redis.lrange(self.key, 0, -1)
-
-        if not pipe:
-            return self.process_result(value)
-        else:
-            return value
+    def collect_data(self, pipe):
+        return pipe.lrange(self.key, 0, -1)
 
     def __push(self, values):
         return self.redis.rpush(self.key, *self.onsave(values))

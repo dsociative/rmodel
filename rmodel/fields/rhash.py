@@ -17,14 +17,11 @@ class rhash(BaseField):
     def keys(self):
         return self.redis.hkeys(self.key)
 
-    def data(self, pipe=None, key=False):
-        redis = pipe or self.redis
-        value = redis.hgetall(self.key)
+    def data(self):
+        return self.process(self.collect_data(self.redis))
 
-        if not pipe:
-            return self.process(value)
-        else:
-            return value
+    def collect_data(self, pipe):
+        return pipe.hgetall(self.key)
 
     def onsave(self, field, value):
         return value

@@ -24,18 +24,14 @@ class rset(BaseField):
     def data_default(self):
         return []
 
-    def data(self, pipe=None, key=False):
+    def data(self):
         '''
         :returns: ['item1', 'item2']
         '''
+        return [self.typer(i) for i in self.collect_data(self.redis)]
 
-        redis = pipe or self.redis
-        value = redis.smembers(self.key)
-
-        if not pipe:
-            return [self.typer(i) for i in value]
-        else:
-            return value
+    def collect_data(self, pipe):
+        return pipe.smembers(self.key)
 
     def append(self, *values):
         return self.redis.sadd(self.key, *self.onsave(values))

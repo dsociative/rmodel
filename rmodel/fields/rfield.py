@@ -13,8 +13,8 @@ class rfield(BaseField):
         pipe.hdel(self.cursor.key, self.prefix)
         self._session.add(self.cursor.items, None, self.prefix)
 
-    def data(self, redis):
-        return redis.hget(self.cursor.key, self.prefix)
+    def collect_data(self, pipe):
+        return pipe.hget(self.cursor.key, self.prefix)
 
     def set(self, value):
         self._session.add(self.cursor.items, value, field=self.prefix)
@@ -22,7 +22,7 @@ class rfield(BaseField):
                                self.onsave(value))
 
     def get(self):
-        return self.process_result(self.data(self.redis))
+        return self.process_result(self.collect_data(self.redis))
 
     def onincr(self, value):
         return value

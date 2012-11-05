@@ -4,9 +4,11 @@ from rmodel.fields.base_field import BaseField
 
 class rzlist(BaseField):
 
-    def data(self, redis=None, key=False):
-        redis = redis or self.redis
-        return redis.zrange(self.key, 0, -1, withscores=True)
+    def data(self):
+        return self.collect_data(self.redis)
+
+    def collect_data(self, pipe):
+        return pipe.zrange(self.key, 0, -1, withscores=True)
 
     def data_default(self):
         return []

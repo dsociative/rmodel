@@ -47,19 +47,22 @@ class BaseModel(BaseBound):
         for name, field in fields:
             self._fields.append(field.bound(self, name))
 
-    def data(self, pipe=None):
-        child = True
+    def data(self):
+        pipe = self.redis.pipeline()
+        self.collect_data(pipe)
+        return self.process_data(pipe.execute())
 
-        if not pipe:
-            child = False
-            pipe = self.redis.pipeline()
+    def fields_data(self, gen):
+        pipe = self.redis.pipeline()
 
+        for field in gen:
+            field.collect_data(pipe)
+
+        return pipe.execute()
+
+    def collect_data(self, pipe):
         for field in self.fields():
-            field.data(pipe)
-
-        if not child:
-            values = map(self.typer, pipe.execute())
-            return self.process_data(values)
+            field.collect_data(pipe)
 
     def process_data(self, values):
         result = {}
