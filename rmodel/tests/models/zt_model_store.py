@@ -171,3 +171,8 @@ class RUnitItemTest(BaseRStoreTest):
 
         self.eq(self.item.data(), {'hash': {}, 'id': None, 'total': None})
         self.eq(item2.data(), {'hash': {'1': 1}, 'id': None, 'total': None})
+
+    def test_models_session(self):
+        session = RSession()
+        models = list(self.model.store.models(session))
+        self.eq(models[0]._session, session)

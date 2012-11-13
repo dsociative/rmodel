@@ -32,9 +32,9 @@ class RStore(BaseModel):
     def items(self):
         return self.redis.hgetall(self.cursor.key).items()
 
-    def models(self):
+    def models(self, session=None):
         for key in self.keys():
-            yield self.get(key)
+            yield self.init_model(key, session)
 
     def fields(self):
         for model in self.models():
