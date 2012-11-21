@@ -4,6 +4,9 @@ from rmodel.fields.base_field import BaseField
 
 class rzlist(BaseField):
 
+    def __contains__(self, value):
+        return self.score(value) is not None
+
     def data(self):
         return self.collect_data(self.redis)
 
@@ -48,3 +51,6 @@ class rzlist(BaseField):
 
     def rangebys(self, score):
         return  self.redis.zrangebyran()
+
+    def score(self, value):
+        return self.redis.zscore(self.key, value)

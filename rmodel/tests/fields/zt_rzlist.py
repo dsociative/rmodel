@@ -61,7 +61,19 @@ class RZListTest(BaseTest):
         self.field.add('name2', 2)
         self.eq(self.field.revrange(), ['name2', 'name1'])
 
+    def test_score(self):
+        self.eq(self.field.score('test'), None)
+        self.field.add('test', 30)
+        self.eq(self.field.score('test'), 30)
+        self.field.add('something', 50)
+        self.eq(self.field.score('something'), 50)
+
     def test_revrank(self):
         for i in xrange(5):
             self.field.add(str(i), i)
         self.eq(self.field.revrank('3'), 1)
+
+    def test_exists(self):
+        self.false('test' in self.field)
+        self.field.add('test')
+        self.true('test' in self.field)
