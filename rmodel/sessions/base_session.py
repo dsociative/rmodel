@@ -3,7 +3,7 @@
 
 class BaseSession(object):
 
-    def add(self, items, value, field=None):
+    def add(self, items, value):
         ''' pattern method '''
 
     def append(self, items, values, end):

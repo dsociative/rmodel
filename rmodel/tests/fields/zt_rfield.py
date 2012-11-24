@@ -14,6 +14,9 @@ class RfieldTest(BaseTest):
     def test_init(self):
         self.eq(self.model.field.get(), 0)
 
+    def test_cursor(self):
+        self.eq(self.model.field.cursor.items, ('model', 'field'))
+
     def test_incr(self):
         self.model.field -= 10
         self.eq(self.model.field.get(), -10)

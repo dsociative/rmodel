@@ -5,20 +5,21 @@ from rmodel.fields.base_field import BaseField
 class rfield(BaseField):
 
     def assign(self, inst):
-        self.cursor = inst.cursor
+        self.key = inst.cursor.key
         self.instance = inst
+        self.cursor = inst.cursor.new(self.prefix)
 
     def clean(self, pipe=None, inst=None):
         pipe = pipe or self.redis
-        pipe.hdel(self.cursor.key, self.prefix)
-        self._session.add(self.cursor.items, None, self.prefix)
+        pipe.hdel(self.key, self.prefix)
+        self._session.add(self.cursor.items, None)
 
     def collect_data(self, pipe):
-        return pipe.hget(self.cursor.key, self.prefix)
+        return pipe.hget(self.key, self.prefix)
 
     def set(self, value):
-        self._session.add(self.cursor.items, value, field=self.prefix)
-        return self.redis.hset(self.cursor.key, self.prefix,
+        self._session.add(self.cursor.items, value)
+        return self.redis.hset(self.key, self.prefix,
                                self.onsave(value))
 
     def get(self):
@@ -28,9 +29,9 @@ class rfield(BaseField):
         return value
 
     def incr(self, value):
-        value = self.redis.hincrby(self.cursor.key, self.prefix,
+        value = self.redis.hincrby(self.key, self.prefix,
                                    self.onincr(value))
-        self._session.add(self.cursor.items, value, self.prefix)
+        self._session.add(self.cursor.items, value)
         return value
 
     def __isub__(self, value):

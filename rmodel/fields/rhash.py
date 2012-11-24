@@ -35,7 +35,7 @@ class rhash(BaseField):
         return key
 
     def set(self, field, value):
-        self._session.add(self.cursor.items, value, field)
+        self._session.add(self.cursor.items + (field,), value)
         return self.redis.hset(self.key, field, self.onsave(field, value))
 
     def get(self, field):

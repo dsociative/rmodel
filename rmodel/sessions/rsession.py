@@ -8,10 +8,7 @@ class RSession(BaseSession):
     def __init__(self):
         self._store = []
 
-    def add(self, items, value, field=None):
-        if field is not None:
-            value = {field: value}
-
+    def add(self, items, value):
         self._store.append((items, value))
 
     def append(self, items, values, end):
@@ -27,13 +24,7 @@ class RSession(BaseSession):
         return d
 
     def _save_change(self, nested, field, change):
-        ctype = type(change)
-        nested.setdefault(field, ctype())
-
-        if ctype is dict:
-            nested[field].update(change)
-        elif ctype is list:
-            nested[field].extend(change)
+        nested[field] = change
 
     def changes(self):
         rt = {}
