@@ -1,17 +1,21 @@
 #coding: utf8
 from rmodel.fields.rzlist import rzlist
+from rmodel.sessions.rsession import RSession
 from rmodel.tests.base_test import BaseTest
 
 
-class RZListTest(BaseTest):
+class rzlistBaseTest(BaseTest):
 
     def setUp(self):
-        super(RZListTest, self).setUp()
+        super(rzlistBaseTest, self).setUp()
         self.unbound = rzlist()
         self.model.init_fields([('names', self.unbound)])
         self.field = self.model.names
 
-    def test_(self):
+
+class rzlistTest(rzlistBaseTest):
+
+    def test_add(self):
         self.eq(self.model.names.data_default(), [])
         self.eq(self.model.data(), {'names': []})
 
@@ -48,14 +52,6 @@ class RZListTest(BaseTest):
         self.eq(self.field.range(1, 2, withscores=True),
             [('fields1', 1.0), ('fields2', 2.0)])
 
-    def test_set(self):
-        self.field.set('name', 1)
-        self.eq(self.field.data(), [('name', 1)])
-        self.field.set('name', 5)
-        self.eq(self.field.data(), [('name', 5)])
-        self.field.set('else')
-        self.eq(self.field.data(), [('else', 0), ('name', 5)])
-
     def test_revrange(self):
         self.field.add('name1', 1)
         self.field.add('name2', 2)
@@ -77,3 +73,28 @@ class RZListTest(BaseTest):
         self.false('test' in self.field)
         self.field.add('test')
         self.true('test' in self.field)
+
+
+class rzlistSessionTest(rzlistBaseTest):
+
+    def setUp(self):
+        super(rzlistSessionTest, self).setUp()
+        self.field._session = RSession()
+
+    def test_save(self):
+        self.field.add('name', 50)
+        self.field.add('other', 30)
+        self.eq(self.field._session._store,
+                {'model': {'names': {'other': 30, 'name': 50}}})
+
+    def test_incr(self):
+        self.field.add('other', 30)
+        self.field.incr('other', 30)
+        self.eq(self.field._session._store,
+                        {'model': {'names': {'other': 60}}})
+
+    def test_remove(self):
+        self.field.remove('name')
+        self.field.remove('other')
+        self.eq(self.field._session._store,
+                {'model': {'names': {'other': None, 'name': None}}})

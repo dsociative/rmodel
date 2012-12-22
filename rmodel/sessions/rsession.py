@@ -6,32 +6,33 @@ from rmodel.sessions.base_session import BaseSession
 class RSession(BaseSession):
 
     def __init__(self):
-        self._store = []
+        self._store = {}
 
     def add(self, items, value):
-        self._store.append((items, value))
+        self.set_by_path(items, value)
 
     def append(self, items, values, end):
         keys = xrange(end - len(values), end)
-        self._store.append((items, dict(zip(keys, values))))
-
-    def _get_nested(self, store, path):
-        d = store
-        for item in path:
-            d.setdefault(item, {})
-            d = d.get(item)
-
-        return d
-
-    def _save_change(self, nested, field, change):
-        nested[field] = change
+        for key, value in zip(keys, values):
+            self.add(items + (key,), value)
 
     def changes(self):
-        rt = {}
-        for items, change in self._store:
-            items, last = items[:-1], items[-1]
+        return self._store
 
-            nested = self._get_nested(rt, items)
-            self._save_change(nested, last, change)
+    def set_by_path(self, path, value):
+        area, destination = self.pave_path(path)
+        area[destination] = value
 
-        return rt
+    def path_destination(self, path):
+        return path[:-1], path[-1]
+
+    def pave_path(self, path):
+        area_path, destination  = self.path_destination(path)
+
+        area = self._store
+        for part in area_path:
+            if area.get(part, None) is None:
+                area[part] = {}
+
+            area = area[part]
+        return area, destination

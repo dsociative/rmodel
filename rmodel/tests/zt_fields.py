@@ -17,10 +17,10 @@ class NestedModel(RUnit):
     nested = SimpleModel()
 
 
-class FieldsSimpleTest(BaseTest):
+class FieldsIterTest(BaseTest):
 
     def setUp(self):
-        super(FieldsSimpleTest, self).setUp()
+        super(FieldsIterTest, self).setUp()
         self.model = SimpleModel(self.redis, inst=None)
         self.model.name.set('nick')
         self.model.uid.set('1')
@@ -30,7 +30,7 @@ class FieldsSimpleTest(BaseTest):
         self.eq(self.gen.process_field(self.model.name), self.model.name)
 
     def test_get_fields(self):
-        self.eq(list(self.gen.get_fields(self.model)),
+        self.eq(list(self.gen.get_fields()),
                 [self.model.name, self.model.uid])
 
     def test_process(self):

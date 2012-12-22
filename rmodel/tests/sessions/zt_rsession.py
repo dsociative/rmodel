@@ -37,77 +37,49 @@ class RSessionTest(BaseTest):
         self.session = RSession()
         self.model = SimpleModel(session=self.session, redis=self.redis)
 
-    def test_save_change_dict(self):
-        rt = {}
-        self.session._save_change(rt, 'nested', {'field': 'value'})
-        self.eq(rt, {'nested': {'field': 'value'}})
+    def test_path_destination(self):
+        self.eq(self.session.path_destination(('name', 'something', 'dest')),
+                (('name', 'something'), 'dest'))
 
-        self.session._save_change(rt, 'nested', {'name': 'Vasya'})
-        self.eq(rt, {'nested': {'name': 'Vasya'}})
+    def test_set_by_path(self):
+        self.session.set_by_path(('root', 'field', 'name'), 'Vasya')
+        self.eq(self.session._store, {'root': {'field': {'name': 'Vasya'}}})
 
-    def test_save_change_list(self):
-        rt = {}
-        self.session._save_change(rt, 'scroll', ['one'])
-        self.eq(rt, {'scroll': ['one']})
-
-        self.session._save_change(rt, 'scroll', [2, 3])
-        self.eq(rt, {'scroll': [2, 3]})
+    def test_pave_path(self):
+        self.eq(self.session.pave_path(('root', 'field', 'name')),
+                ({}, 'name'))
 
     def test_set_rfield_store(self):
         self.model.field.set('test')
-        self.eq(self.session._store, [(('simple', 'field'), 'test')])
+        self.eq(self.session._store, {'simple': {'field': 'test'}})
 
     def test_rfield_incr(self):
         self.model.field.set(10)
-        self.session._store = []
         self.model.field += 5
-        self.eq(self.session._store, [(('simple', 'field'), 15)])
+        self.eq(self.session._store, {'simple': {'field': 15}})
 
     def test_append_rlist(self):
         self.model.scroll.append('one', 'two', 'orc')
-        self.eq(self.session._store, [(('simple', 'scroll'),
-                                       {0: 'one', 1: 'two', 2: 'orc'})])
+        self.eq(self.session._store,
+                {'simple': {'scroll': {0: 'one', 1: 'two', 2: 'orc'}}})
 
     def test_rlist_set(self):
         self.model.scroll.set(['one', 'two'])
-        self.eq(self.session._store, [(('simple', 'scroll'),
-                                       ['one', 'two'])])
+        self.eq(self.session._store, {'simple': {'scroll': ['one', 'two']}})
 
     def test_rhash_set(self):
         self.model.hash.set('goblin', 'attack')
-        self.eq(self.session._store, [(('simple', 'hash', 'goblin'),
-                                       'attack')])
+        self.eq(self.session._store, {'simple': {'hash': {'goblin': 'attack'}}})
 
     def test_rhash_clean(self):
         self.model.hash.clean()
-        self.eq(self.session._store, [(('simple', 'hash'), {})])
+        self.eq(self.session._store, {'simple': {'hash': {}}})
 
     def test_rfield_in_stored_item(self):
         item = self.model.store.add()
         item.name.set('Orc?')
-        self.eq(self.session._store, [(('simple', 'store', '1', 'name'),
-                                        'Orc?')])
-
-    def test_changes(self):
-        self.session.add(('simple', 'field'), 'test')
-        self.eq(self.session.changes(), {'simple': {'field': 'test'}})
-
-    def test_changes_dict(self):
-        self.session.add(('simple', 'hash'), {})
-        self.eq(self.session.changes(), {'simple': {'hash': {}}})
-
-    def test_two_field(self):
-        self.session.add(('simple', 'power'), 100500)
-        self.session.add(('simple', 'name'), 'Vasya')
-        self.eq(self.session.changes(), {'simple': {'name': 'Vasya',
-                                                    'power': 100500}})
-
-    def test_two_nested(self):
-        self.session.add(('', 'vasya', 'home', 'size'), 'big')
-        self.session.add(('', 'goblin', 'cave', 'level'), 1)
-        self.eq(self.session.changes(),
-                {'': {'vasya': {'home': {'size': 'big'}},
-                      'goblin': {'cave': {'level': 1}}}})
+        self.eq(self.session._store,
+                {'simple': {'store': {'1': {'name': 'Orc?'}}}})
 
     def test_nested_list_changes(self):
         self.session.add(('root', 'nested', 'scroll'), ['one', 'two'])
@@ -127,5 +99,6 @@ class RSessionTest(BaseTest):
 
     def test_append_many(self):
         self.session.append(('list',), ['value1', 'value2', 'value3'], 6)
+        self.session.append(('list',), ['q'], 9)
         self.eq(self.session.changes(), {'list': {3: 'value1', 4: 'value2',
-                                                  5: 'value3'}})
+                                                  5: 'value3', 8: 'q'}})

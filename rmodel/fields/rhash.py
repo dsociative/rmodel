@@ -7,8 +7,8 @@ class rhash(BaseField):
     def __len__(self):
         return self.redis.hlen(self.key)
 
-    def __contains__(self, key):
-        return key in self.keys
+    def __contains__(self, field):
+        return self.redis.hexists(self.key, field)
 
     def data_default(self):
         return {}
@@ -35,12 +35,16 @@ class rhash(BaseField):
         return key
 
     def set(self, field, value):
-        self._session.add(self.cursor.items + (field,), value)
+        self._field_changed(field, value)
         return self.redis.hset(self.key, field, self.onsave(field, value))
 
     def get(self, field):
         value = self.redis.hget(self.key, field)
         return self.onload(field, self.process_result(value))
+
+    def incr(self, field, value=1):
+        value = self.process_result(self.redis.hincrby(self.key, field, value))
+        return self._field_changed(field, value)
 
     def set_dict(self, value):
         return self.redis.hmset(self.key, value)
@@ -56,9 +60,7 @@ class rhash(BaseField):
 
     def process_result(self, values):
         if type(values) is dict:
-            for k, v in values.iteritems():
-                values[k] = super(rhash, self).process_result(v)
-            return values
+            return self.process(values)
         else:
             return super(rhash, self).process_result(values)
 
@@ -67,5 +69,3 @@ class rhash(BaseField):
             rt[key] = self.process_result(value)
         return rt
 
-    def all(self):
-        return self.data()

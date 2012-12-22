@@ -4,6 +4,8 @@ from redis.client import Redis
 from rmodel.cursor import Cursor
 from rmodel.fields.rfield import rfield
 from rmodel.models.runit import RUnit
+from rmodel.sessions.rsession import RSession
+from rmodel.tests.base_test import BaseTest
 from unittest2.case import TestCase
 
 
@@ -44,7 +46,7 @@ class ModelWithIncr(RUnit):
     incr_field = rfield_with_onincr(int, 0)
 
 
-class Test(TestCase):
+class RUnitTest(BaseTest):
 
     def setUp(self):
         self.redis = Redis()
@@ -127,6 +129,11 @@ class Test(TestCase):
         self.assertEqual(self.model.id.get(), 334)
         self.assertEqual(self.model.name.get(), 'HELLO')
         TestModel.defaults = False
+
+    def test_session_remove(self):
+        session = self.model._session = RSession()
+        self.model.remove()
+        self.eq(session.changes(), {self.model.prefix: None})
 
 
 class RootDBInitTest(TestCase):

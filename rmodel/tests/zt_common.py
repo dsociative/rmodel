@@ -1,6 +1,6 @@
 # coding: utf8
+from rmodel.common import ProxyRun, dynamic_type
 
-from common import ProxyRun, dynamic_type
 from unittest2.case import TestCase
 
 

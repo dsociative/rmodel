@@ -9,7 +9,7 @@ class RObject(object):
         pass
 
     def clean(self, pipe=None, inst=None):
-        raise NotImplemented()
+        raise NotImplemented
 
     def process_data(self, values):
-        raise NotImplemented()
+        raise NotImplemented

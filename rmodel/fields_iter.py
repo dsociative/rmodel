@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from rmodel.models.base_model import BaseModel
 
 
 class FieldsIter(object):
@@ -10,14 +9,14 @@ class FieldsIter(object):
         self.model = model
         self.prefix = model.prefix
 
-        self._fields = list(self.get_fields(model))
+        self._fields = list(self.get_fields())
 
-    def get_fields(self, model):
+    def get_fields(self):
         for field in self.model.fields():
             yield self.process_field(field)
 
     def process_field(self, field):
-        if issubclass(field.__class__, BaseModel):
+        if field.ismodel:
             return self.iter_class(field)
         else:
             return field

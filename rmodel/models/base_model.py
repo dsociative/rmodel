@@ -2,6 +2,7 @@
 from rmodel.base_bound import BaseBound
 from rmodel.common import Run
 from rmodel.cursor import Cursor
+from rmodel.fields_iter import FieldsIter
 from rmodel.sessions.base_session import BaseSession
 
 
@@ -13,6 +14,7 @@ class BaseModel(BaseBound):
 
     defaults = False
     prefix = ''
+    ismodel = True
 
     def fields(self):
         raise NotImplementedError()
@@ -48,27 +50,11 @@ class BaseModel(BaseBound):
             self._fields.append(field.bound(self, name))
 
     def data(self):
-        pipe = self.redis.pipeline()
-        self.collect_data(pipe)
-        return self.process_data(pipe.execute())
-
-    def fields_data(self, gen):
-        pipe = self.redis.pipeline()
-
-        for field in gen:
-            field.collect_data(pipe)
-
-        return pipe.execute()
+        return FieldsIter(self).data()
 
     def collect_data(self, pipe):
         for field in self.fields():
             field.collect_data(pipe)
-
-    def process_data(self, values):
-        result = {}
-        for field in self.fields():
-            result[field.prefix] = field.process_data(values)
-        return result
 
     def clean(self, pipe, inst):
         for field in self.fields():

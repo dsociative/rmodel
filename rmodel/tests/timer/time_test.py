@@ -1,9 +1,10 @@
 #coding: utf8
 
-from model.rmodel import RUnit
-from model.fields.rfield import rfield
-from model.fields.rhash import rhash
 import timeit
+from rmodel.fields.rfield import rfield
+from rmodel.fields.rhash import rhash
+from rmodel.models.runit import RUnit
+
 
 class TestBuilding(RUnit):
 

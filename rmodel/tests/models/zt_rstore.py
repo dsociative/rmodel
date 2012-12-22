@@ -127,7 +127,7 @@ class RUnitItemTest(BaseRStoreTest):
         self.eq(len(self.model.store), 1)
 
         self.eq(self.model.store.new_key(), long(2))
-        item = self.model.store.add()
+        self.model.store.add()
         self.eq(self.model.store.new_key(), long(4))
         self.eq(len(self.model.store), 2)
 

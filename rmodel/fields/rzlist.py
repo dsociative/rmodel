@@ -20,19 +20,15 @@ class rzlist(BaseField):
         return pipe or self.redis
 
     def add(self, name, score=0, pipe=None):
+        self._field_changed(name, score)
         return self._db(pipe).zadd(self.key, name, score)
 
-    def set(self, name, score=0):
-        pipe = self.redis.pipeline()
-        self.remove(name, pipe)
-        self.add(name, score, pipe)
-        return pipe.execute()
-
     def remove(self, name, pipe=None):
+        self._field_changed(name, None)
         return self._db(pipe).zrem(self.key, name)
 
     def incr(self, name, incr_by=1):
-        return self.redis.zincrby(self.key, name, incr_by)
+        return self._field_changed(name, self.redis.zincrby(self.key, name, incr_by))
 
     def revrange(self, frm=0, to=-1, withscores=False):
         return self.redis.zrevrange(self.key, frm, to, withscores)
@@ -48,9 +44,6 @@ class rzlist(BaseField):
                                             withscores=withscores)
         else:
             return self.redis.zrange(self.key, frm, to, withscores=withscores)
-
-    def rangebys(self, score):
-        return  self.redis.zrangebyran()
 
     def score(self, value):
         return self.redis.zscore(self.key, value)

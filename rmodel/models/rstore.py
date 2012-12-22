@@ -1,6 +1,5 @@
 # coding: utf8
 from rmodel.models.base_model import BaseModel
-from rmodel.models.runit import RUnit
 
 
 class RStore(BaseModel):

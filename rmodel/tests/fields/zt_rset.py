@@ -1,15 +1,18 @@
 # coding: utf8
 from rmodel.fields.rset import rset
 from rmodel.tests.base_test import BaseTest
+from rmodel.tests.fields.zt_field_session import FieldSessionTest
 
 
-class RSetTest(BaseTest):
-
+class RSetBaseTest(BaseTest):
     def setUp(self):
-        super(RSetTest, self).setUp()
+        super(RSetBaseTest, self).setUp()
         self.unbound = rset()
         self.model.init_fields([('names', self.unbound)])
         self.field = self.model.names
+
+
+class RSetTest(RSetBaseTest):
 
     def test_default(self):
         self.eq(self.field.data(), [])
@@ -53,3 +56,24 @@ class RSetTest(BaseTest):
         self.not_in('name', self.field)
         self.field.append('name')
         self.isin('name', self.field)
+
+
+class RSetSessionTest(FieldSessionTest, RSetBaseTest):
+
+    def test_add(self):
+        self.field.append('name', 'something')
+        self.field.append('else')
+        self.eq(self.session.changes(),
+                {'model': {'names': {'name': 1, 'something': 1, 'else': 1}}})
+
+    def test_remove(self):
+        self.field.append('name')
+        self.field.remove('name')
+        self.eq(self.session.changes(),
+                {'model': {'names': {'name': None}}})
+
+    def test_pop(self):
+        self.field.append('name')
+        self.field.pop()
+        self.eq(self.session.changes(),
+                {'model': {'names': {'name': None}}})

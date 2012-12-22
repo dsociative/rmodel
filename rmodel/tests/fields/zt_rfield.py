@@ -1,6 +1,5 @@
 #coding: utf8
 from rmodel.fields.rfield import rfield
-from rmodel.models.runit import RUnit
 from rmodel.tests.base_test import BaseTest
 
 
