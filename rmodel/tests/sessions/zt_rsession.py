@@ -71,9 +71,13 @@ class RSessionTest(BaseTest):
         self.model.hash.set('goblin', 'attack')
         self.eq(self.session._store, {'simple': {'hash': {'goblin': 'attack'}}})
 
-    def test_rhash_clean(self):
-        self.model.hash.clean()
+    def test_rhash_delete(self):
+        self.model.hash.delete()
         self.eq(self.session._store, {'simple': {'hash': {}}})
+
+    def test_rfield_delete(self):
+        self.model.field.delete()
+        self.eq(self.session._store, {'simple': {'field': None}})
 
     def test_rfield_in_stored_item(self):
         item = self.model.store.add()

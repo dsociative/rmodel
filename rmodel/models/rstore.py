@@ -81,8 +81,8 @@ class RStore(BaseModel):
     def delete_key(self, prefix):
         return self.redis.hdel(self._key_cursor.key, prefix)
 
-    def clean(self, pipe, inst):
-        super(RStore, self).clean(pipe, inst)
+    def clean(self, pipe):
+        super(RStore, self).clean(pipe)
 
         pipe.delete(self.cursor.key)
         pipe.delete(self._key_cursor.key)

@@ -8,9 +8,9 @@ class RUnit(BaseModel):
         return self._fields
 
     def remove(self):
-        self._session.add(self.cursor.items, None)
         pipe = self.redis.pipeline()
-        self.clean(pipe, self)
+        self.clean(pipe)
+        self._session.add(self.cursor.items, None)
         pipe.execute()
 
     def incr(self, sect, key, val=1):

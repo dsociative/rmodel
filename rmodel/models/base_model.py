@@ -56,9 +56,9 @@ class BaseModel(BaseBound):
         for field in self.fields():
             field.collect_data(pipe)
 
-    def clean(self, pipe, inst):
+    def clean(self, pipe):
         for field in self.fields():
-            field.clean(pipe, self)
+            field.clean(pipe)
 
     def typer(self, value):
         return value

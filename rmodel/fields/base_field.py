@@ -52,13 +52,18 @@ class BaseField(BaseBound):
         else:
             return self.process_result(value)
 
-    def clean(self, pipe=None, inst=None):
-        pipe = pipe or self.redis
+    def clean(self, pipe):
         pipe.delete(self.key)
-        self._session.add(self.cursor.items, self.data_default())
+
+    def delete(self):
+        self.clean(self.redis)
+        self._change(self.data_default())
 
     def data_default(self):
         return self.default
 
     def _field_changed(self, name, value):
         self._session.add(self.cursor.items + (name,), value)
+
+    def _change(self, value):
+        self._session.add(self.cursor.items, value)

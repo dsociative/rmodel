@@ -1,6 +1,7 @@
 Milestone 1
 ^^^^^^^^^^^^
 
+* :func:`.BaseField.clean` and :func:`.BaseModel.clean` -> :func:`.clean`, :func:`.delete` separation
 * :func:`.RStore.remove_model` added
 * :func:`.RUnit.remove` session integration
 * :class:`.rset` session integration

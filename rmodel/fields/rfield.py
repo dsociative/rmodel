@@ -9,10 +9,9 @@ class rfield(BaseField):
         self.instance = inst
         self.cursor = inst.cursor.new(self.prefix)
 
-    def clean(self, pipe=None, inst=None):
-        pipe = pipe or self.redis
+    def clean(self, pipe):
         pipe.hdel(self.key, self.prefix)
-        self._session.add(self.cursor.items, None)
+#        self._session.add(self.cursor.items, None)
 
     def collect_data(self, pipe):
         return pipe.hget(self.key, self.prefix)
