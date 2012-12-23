@@ -69,14 +69,17 @@ class RStore(BaseModel):
     def new_key(self):
         return self.redis.hincrby(self._key_cursor.key, self.INCR_KEY)
 
-    def delete_key(self, prefix):
-        return self.redis.hdel(self._key_cursor.key, prefix)
-
     def remove_item(self, prefix):
         item = self.get(prefix)
         if item:
-            item.remove()
-            self.delete_key(prefix)
+            self.remove_model(item)
+
+    def remove_model(self, item):
+        item.remove()
+        self.delete_key(item.prefix)
+
+    def delete_key(self, prefix):
+        return self.redis.hdel(self._key_cursor.key, prefix)
 
     def clean(self, pipe, inst):
         super(RStore, self).clean(pipe, inst)

@@ -1,6 +1,7 @@
 Milestone 1
 ^^^^^^^^^^^^
 
+* :func:`.RStore.remove_model` added
 * :func:`.RUnit.remove` session integration
 * :class:`.rset` session integration
 * :func:`.rhahs.incr` added

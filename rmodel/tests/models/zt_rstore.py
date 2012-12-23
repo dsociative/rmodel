@@ -149,13 +149,17 @@ class RUnitItemTest(BaseRStoreTest):
         self.eq(self.redis.hgetall('1:1:hash'), {})
         self.eq(self.redis.hgetall('1'), {})
 
-    def test_remove(self):
+    def test_remove_item(self):
         self.item.total = 2
         self.item.id = 1
 
         self.assertTrue(self.model.store.get(1))
         self.model.store.remove_item(1)
         self.assertFalse(self.model.store.get(1))
+
+    def test_remove_model(self):
+        self.model.store.remove_model(self.item)
+        self.false(self.item.prefix in self.model.store)
 
     def test_move(self):
         self.item.id.set(2)
