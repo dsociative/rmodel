@@ -1,17 +1,21 @@
 #coding: utf8
 
 from rmodel.fields.rlist import rlist
+from rmodel.sessions.rsession import RSession
 from rmodel.tests.base_test import BaseTest
 
 
-class rlistTest(BaseTest):
+class rlistBaseTest(BaseTest):
 
     def setUp(self):
-        super(rlistTest, self).setUp()
+        super(rlistBaseTest, self).setUp()
 
         self.unbound = rlist()
         self.model.init_fields([('names', self.unbound)])
         self.field = self.model.names
+
+
+class rlistTest(rlistBaseTest):
 
     def test_range(self):
         self.eq(self.model.names.range(), [])
@@ -81,3 +85,15 @@ class rlistTest(BaseTest):
     def test_contains_true(self):
         self.model.names.append('hello')
         self.eq('hello' in self.model.names, True)
+
+
+class rlistSessionTest(rlistBaseTest):
+
+    def setUp(self):
+        super(rlistSessionTest, self).setUp()
+        self.session = self.field._session = RSession()
+
+    def test_remove(self):
+        self.field.append('test')
+        self.field.remove('test')
+        self.eq(self.session._store, {'model': {'names': {0: None}}})

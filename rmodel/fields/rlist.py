@@ -58,7 +58,8 @@ class rlist(BaseField):
         """
         http://redis.io/commands/lrem
         """
-        return self.redis.lrem(self.key, value, count)
+        self._session.append(self.cursor.items, [None],
+                             self.redis.lrem(self.key, value, count))
 
     def pop(self):
         return self.typer(self.redis.lpop(self.key))
