@@ -7,6 +7,8 @@ class rlist(BaseField):
     Поле для работы со списками
     """
 
+    DELETED = '__del__'
+
     def __contains__(self, value):
         return value in self.range()
 
@@ -64,8 +66,21 @@ class rlist(BaseField):
     def pop(self):
         return self.typer(self.redis.lpop(self.key))
 
+    def remove_index(self, index):
+        pipe = self.redis.pipeline()
+        self._set(pipe, index, self.DELETED)
+        self._remove(pipe, self.DELETED)
+        pipe.execute()
+        self._field_changed(index, None)
+
     def trim(self, frm, to):
         return self.redis.ltrim(self.key, frm, to)
 
     def by_index(self, index):
         return self.typer(self.redis.lindex(self.key, index))
+
+    def _set(self, pipe, index, value):
+        pipe.lset(self.key, index, value)
+
+    def _remove(self, pipe, value):
+        return pipe.lrem(self.key, value)

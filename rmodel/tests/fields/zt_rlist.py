@@ -86,6 +86,11 @@ class rlistTest(rlistBaseTest):
         self.model.names.append('hello')
         self.eq('hello' in self.model.names, True)
 
+    def test_remove_index(self):
+        self.model.names.append('hello', 'qwerty')
+        self.model.names.remove_index(0)
+        self.eq(self.model.names.range(), ['qwerty'])
+
 
 class rlistSessionTest(rlistBaseTest):
 
@@ -93,7 +98,11 @@ class rlistSessionTest(rlistBaseTest):
         super(rlistSessionTest, self).setUp()
         self.session = self.field._session = RSession()
 
-    def test_remove(self):
-        self.field.append('test')
-        self.field.remove('test')
-        self.eq(self.session._store, {'model': {'names': {0: None}}})
+    def test_remove_index(self):
+        for x in xrange(3):
+            self.field.append(x)
+
+        self.field.remove_index(2)
+        self.eq(self.session._store, {'model': {'names': {0: 0, 1: 1,
+                                                          2: None}}})
+        self.eq(self.field.range(), [0, 1])
