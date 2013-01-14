@@ -8,7 +8,10 @@ class rhash(BaseField):
         return self.redis.hlen(self.key)
 
     def __contains__(self, field):
-        return self.redis.hexists(self.key, field)
+        return self._exists(self.redis, field)
+
+    def _exists(self, redis, field):
+        return redis.hexists(self.key, field)
 
     def data_default(self):
         return {}
