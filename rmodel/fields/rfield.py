@@ -27,9 +27,11 @@ class rfield(BaseField):
     def onincr(self, value):
         return value
 
+    def _incr(self, redis, value):
+        return redis.hincrby(self.key, self.prefix, value)
+
     def incr(self, value):
-        value = self.redis.hincrby(self.key, self.prefix,
-                                   self.onincr(value))
+        value = self._incr(self.redis, self.onincr(value))
         self._session.add(self.cursor.items, value)
         return value
 
