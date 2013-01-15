@@ -37,6 +37,11 @@ class RSessionTest(BaseTest):
         self.session = RSession()
         self.model = SimpleModel(session=self.session, redis=self.redis)
 
+    def test_flush(self):
+        self.session.add(('1', '2'), 'value')
+        self.session.flush()
+        self.eq(self.session.changes(), {})
+
     def test_path_destination(self):
         self.eq(self.session.path_destination(('name', 'something', 'dest')),
                 (('name', 'something'), 'dest'))

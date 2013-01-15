@@ -5,8 +5,11 @@ from rmodel.sessions.base_session import BaseSession
 
 class RSession(BaseSession):
 
-    def __init__(self):
+    def flush(self):
         self._store = {}
+
+    def __init__(self):
+        self.flush()
 
     def add(self, items, value):
         self.set_by_path(items, value)
