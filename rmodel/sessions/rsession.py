@@ -11,6 +11,11 @@ class RSession(BaseSession):
     def __init__(self):
         self.flush()
 
+    def pop(self):
+        changes = self.changes()
+        self.flush()
+        return changes
+
     def add(self, items, value):
         self.set_by_path(items, value)
 

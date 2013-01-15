@@ -42,6 +42,11 @@ class RSessionTest(BaseTest):
         self.session.flush()
         self.eq(self.session.changes(), {})
 
+    def test_pop(self):
+        self.session.add(('1', '2'), 'value')
+        self.eq(self.session.pop(), {'1': {'2': 'value'}})
+        self.eq(self.session.changes(), {})
+
     def test_path_destination(self):
         self.eq(self.session.path_destination(('name', 'something', 'dest')),
                 (('name', 'something'), 'dest'))
