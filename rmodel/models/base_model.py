@@ -62,3 +62,9 @@ class BaseModel(BaseBound):
 
     def typer(self, value):
         return value
+
+    def remove(self):
+        pipe = self.redis.pipeline()
+        self.clean(pipe)
+        self._session.add(self.cursor.items, None)
+        pipe.execute()

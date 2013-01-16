@@ -161,6 +161,11 @@ class RUnitItemTest(BaseRStoreTest):
         self.model.store.remove_model(self.item)
         self.false(self.item.prefix in self.model.store)
 
+    def test_remove(self):
+        self.model.store.remove()
+        self.false(self.item.prefix in self.model.store)
+        self.false(self.redis.exists(self.model.store.cursor.key))
+
     def test_move(self):
         self.item.id.set(2)
         self.eq(len(self.model.store), 1)
