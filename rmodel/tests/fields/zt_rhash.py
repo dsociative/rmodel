@@ -48,6 +48,14 @@ class rhashTest(rhashBaseTest):
         self.field.incr('some_key', 20)
         self.eq(self.field['some_key'], 21)
 
+    def test_set_dict_empty(self):
+        self.field['field'] = 1
+        self.eq(self.field.data(), {})
+
+    def test_set_dict_empty(self):
+        self.field['field'] = 1
+        self.field.set_dict({'field2': 2})
+        self.eq(self.field.data(), {'field2': 2})
 
 class rhashSessionTest(rhashBaseTest):
 
@@ -59,3 +67,7 @@ class rhashSessionTest(rhashBaseTest):
         self.field['some_key'] = 11
         self.field.incr('some_key')
         self.eq(self.session.changes(), {'model': {'hash': {'some_key': 12}}})
+
+    def test_set_dict(self):
+        self.field.set_dict({})
+        self.eq(self.session.changes(), {'model': {'hash': {}}})

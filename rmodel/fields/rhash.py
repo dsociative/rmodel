@@ -50,7 +50,17 @@ class rhash(BaseField):
         return self._field_changed(field, value)
 
     def set_dict(self, value):
-        return self.redis.hmset(self.key, value)
+        pipe = self.redis.pipeline()
+        self._change(value)
+
+        self.clean(pipe)
+        if value:
+            self._set_dict(pipe, value)
+
+        return pipe.execute()
+
+    def _set_dict(self, redis, value):
+        return redis.hmset(self.key, value)
 
     def __setitem__(self, field, value):
         return self.set(field, value)
