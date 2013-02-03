@@ -86,6 +86,26 @@ class RStoreTest(BaseRStoreTest):
         item = model.set('test', args=('somthing_else',))
         self.eq(item.field.get(), 'somthing_else')
 
+    def test_keys_cursor(self):
+        self.eq(self.model.store._key_cursor.key, 'model:store:_KEY')
+
+    def test_add_key(self):
+        self.model.store.add_key('1')
+        self.eq(self.redis.smembers(self.model.store._key_cursor.key),
+                set(['1']))
+
+    def test_incr_key(self):
+        for x in xrange(20):
+            self.eq(self.model.store.incr_key(), x + 1)
+
+        self.eq(self.redis.hget(self.model.store.cursor.key,
+                                self.model.store.INCR_KEY), '20')
+
+    def test_add_item(self):
+        for _ in xrange(20):
+            self.model.store.add()
+        self.eq(self.model.store.keys(), set([str(i) for i in xrange(1, 21)]))
+
 
 class RUnitItemTest(BaseRStoreTest):
 
@@ -93,8 +113,9 @@ class RUnitItemTest(BaseRStoreTest):
         super(RUnitItemTest, self).setUp()
         self.item = self.model.store.add()
 
-    def test_redis(self):
-        self.eq(self.item.redis, self.redis)
+    def test_keys_store(self):
+        self.eq(self.redis.smembers(self.model.store._key_cursor.key),
+                set(['1']))
 
     def test_instance(self):
         self.true(isinstance(self.item, ItemModel), True)
@@ -122,13 +143,13 @@ class RUnitItemTest(BaseRStoreTest):
                  'name': 'default_name'})
 
     def test_keys(self):
-        self.eq(self.model.store.keys(), ['1'])
+        self.eq(self.model.store.keys(), set(['1']))
         self.eq(1 in self.model.store, True)
         self.eq(len(self.model.store), 1)
 
-        self.eq(self.model.store.new_key(), long(2))
+        self.eq(self.model.store.incr_key(), long(2))
         self.model.store.add()
-        self.eq(self.model.store.new_key(), long(4))
+        self.eq(self.model.store.incr_key(), long(4))
         self.eq(len(self.model.store), 2)
 
     def test_clean_remove_all(self):
@@ -140,8 +161,8 @@ class RUnitItemTest(BaseRStoreTest):
 
         self.eq(self.redis.hgetall(self.item.cursor.key), {'id': '1'})
         self.eq(self.redis.hgetall(self.item.hash.cursor.key), {'2': '3'})
-        self.eq(self.redis.hgetall(self.model.store._key_cursor.key),
-                {'1': '_KEY', '_INCR': '1'})
+        self.eq(self.redis.smembers(self.model.store._key_cursor.key),
+                set(['1']))
 
         self.model.remove()
 
@@ -172,7 +193,7 @@ class RUnitItemTest(BaseRStoreTest):
 
         self.model.store.move(self.item.prefix, 2)
         self.eq(len(self.model.store), 1)
-        self.eq(self.model.store.keys(), ['2'])
+        self.eq(self.model.store.keys(), set(['2']))
 
     def test_two_models(self):
         item2 = self.model.store.set(2)

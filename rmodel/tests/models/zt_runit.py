@@ -1,12 +1,13 @@
 #coding: utf8
 
+from unittest2.case import TestCase
 from redis.client import Redis
+
 from rmodel.cursor import Cursor
 from rmodel.fields.rfield import rfield
 from rmodel.models.runit import RUnit
 from rmodel.sessions.rsession import RSession
 from rmodel.tests.base_test import BaseTest
-from unittest2.case import TestCase
 
 
 class TestModel(RUnit):

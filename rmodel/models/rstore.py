@@ -4,29 +4,21 @@ from rmodel.models.base_model import BaseModel
 
 class RStore(BaseModel):
 
-    KEY = '_KEY'
+    KEYS_PREFIX = '_KEY'
     INCR_KEY = '_INCR'
 
     def __init__(self, *args, **kwargs):
         super(RStore, self).__init__(*args, **kwargs)
-        self._key_cursor = self.cursor.new(self.KEY)
+        self._key_cursor = self.cursor.new(self.KEYS_PREFIX)
 
     def __contains__(self, prefix):
-        return self.redis.hexists(self._key_cursor.key, prefix)
+        return self.redis.sismember(self._key_cursor.key, prefix)
 
     def __len__(self):
-        if self.redis.hexists(self._key_cursor.key, self.INCR_KEY):
-            shift = 1
-        else:
-            shift = 0
-        return self.redis.hlen(self._key_cursor.key) - shift
+        return self.redis.scard(self._key_cursor.key)
 
     def keys(self):
-
-        def ismodel_key(key):
-            return key != self.INCR_KEY
-
-        return filter(ismodel_key, self.redis.hkeys(self._key_cursor.key))
+        return self.redis.smembers(self._key_cursor.key)
 
     def items(self):
         return self.redis.hgetall(self.cursor.key).items()
@@ -53,21 +45,24 @@ class RStore(BaseModel):
         return self.assign(prefix=prefix, inst=self, session=session,
                            redis=self.redis)
 
+    def add_key(self, key):
+        self.redis.sadd(self._key_cursor.key, key)
+
+    def incr_key(self):
+        return self.redis.hincrby(self.cursor.key, self.INCR_KEY)
+
     def add(self, args=(), session=None):
-        return self.set(self.new_key(), args, session=session)
+        return self.set(self.incr_key(), args, session=session)
 
     def get(self, prefix, session=None):
         if prefix in self:
             return self.init_model(prefix, session)
 
     def set(self, prefix, args=(), session=None):
-        self.redis.hset(self._key_cursor.key, prefix, self.KEY)
+        self.add_key(prefix)
         model = self.init_model(prefix, session=session)
         model.new(*args)
         return model
-
-    def new_key(self):
-        return self.redis.hincrby(self._key_cursor.key, self.INCR_KEY)
 
     def remove_item(self, prefix):
         item = self.get(prefix)
@@ -79,7 +74,7 @@ class RStore(BaseModel):
         self.delete_key(item.prefix)
 
     def delete_key(self, prefix):
-        return self.redis.hdel(self._key_cursor.key, prefix)
+        return self.redis.srem(self._key_cursor.key, prefix)
 
     def clean(self, pipe):
         super(RStore, self).clean(pipe)
