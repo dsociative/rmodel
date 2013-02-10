@@ -50,10 +50,6 @@ class rset(BaseField):
         self._field_changed(value, None)
         return value
 
-    def remove(self, key):
-        """
-        :param key: to remove from set
-        http://redis.io/commands/srem
-        """
-        self._field_changed(key, None)
-        return self.redis.srem(self.key, key)
+    def remove(self, *keys):
+        self._fields_removed(keys)
+        return self.redis.srem(self.key, *keys)

@@ -62,6 +62,10 @@ class BaseField(BaseBound):
     def data_default(self):
         return self.default
 
+    def _fields_removed(self, keys):
+        for key in keys:
+            self._field_changed(key, None)
+
     def _field_changed(self, name, value):
         self._session.add(self.cursor.items + (name,), value)
 

@@ -44,6 +44,11 @@ class RSetTest(RSetBaseTest):
         self.eq(self.field.remove('name'), 1)
         self.eq(self.field.data(), [])
 
+    def test_remove_many(self):
+        self.field.append('name1', 'name2', 'name3')
+        self.field.remove('name1', 'name3')
+        self.eq(self.field.data(), ['name2'])
+
     def test_len(self):
         self.eq(len(self.field), 0)
         self.field.append('name')
@@ -71,6 +76,12 @@ class RSetSessionTest(FieldSessionTest, RSetBaseTest):
         self.field.remove('name')
         self.eq(self.session.changes(),
                 {'model': {'names': {'name': None}}})
+
+    def test_remove_many(self):
+        self.field.append('name1', 'name2')
+        self.field.remove('name1', 'name2')
+        self.eq(self.session.changes(),
+                {'model': {'names': {'name1': None, 'name2': None}}})
 
     def test_pop(self):
         self.field.append('name')
