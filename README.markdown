@@ -1,6 +1,3 @@
+[![Build Status](https://travis-ci.org/dsociative/rmodel.png?branch=staging)](https://travis-ci.org/dsociative/rmodel)
 
-Requirements:
-------------
-
-* rlist field needed 
-	* redis 2.4
+This is simple ORM for redis.
