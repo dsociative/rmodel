@@ -1,6 +1,4 @@
 #coding: utf8
-from timeit import timeit
-import unittest
 
 from unittest2.case import TestCase
 from redis.client import Redis
@@ -152,14 +150,3 @@ class RootDBInitTest(TestCase):
 
     def test_nested_field(self):
         self.assertEqual(self.model.nested.store.redis, self.redis)
-
-
-r = Redis()
-def check():
-    TestModel(r)
-
-
-if __name__ == '__main__':
-    # for _ in xrange(14000):
-    #     check()
-    print timeit('check()', number=80000, setup="from __main__ import check")
