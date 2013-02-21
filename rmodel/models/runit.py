@@ -7,8 +7,6 @@ class RUnit(BaseModel):
     def fields(self):
         return self._fields
 
-
-
     def incr(self, sect, key, val=1):
         section = getattr(self, sect)
         if not section.get(key):

@@ -1,4 +1,6 @@
 #coding: utf8
+from timeit import timeit
+import unittest
 
 from unittest2.case import TestCase
 from redis.client import Redis
@@ -11,7 +13,6 @@ from rmodel.tests.base_test import BaseTest
 
 
 class TestModel(RUnit):
-
     prefix = 'testmodel'
     root = True
 
@@ -20,35 +21,31 @@ class TestModel(RUnit):
 
 
 class StoreModel(RUnit):
-
     prefix = 'storemodel'
     store = rfield(int)
 
 
 class NestedModel(TestModel):
-
     prefix = 'nested'
     name = rfield()
     nested = StoreModel()
+
 
 incr_value = 0
 
 
 class rfield_with_onincr(rfield):
-
     def onincr(self, value):
         global incr_value
         return rfield.onincr(self, value + incr_value)
 
 
 class ModelWithIncr(RUnit):
-
     root = True
     incr_field = rfield_with_onincr(int, 0)
 
 
 class RUnitTest(BaseTest):
-
     def setUp(self):
         self.redis = Redis()
         self.redis.flushdb()
@@ -138,7 +135,6 @@ class RUnitTest(BaseTest):
 
 
 class RootDBInitTest(TestCase):
-
     def setUp(self):
         self.model = NestedModel
         self.model.root = True
@@ -157,4 +153,13 @@ class RootDBInitTest(TestCase):
     def test_nested_field(self):
         self.assertEqual(self.model.nested.store.redis, self.redis)
 
-        
+
+r = Redis()
+def check():
+    TestModel(r)
+
+
+if __name__ == '__main__':
+    # for _ in xrange(14000):
+    #     check()
+    print timeit('check()', number=80000, setup="from __main__ import check")
