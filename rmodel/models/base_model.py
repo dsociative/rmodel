@@ -10,7 +10,29 @@ no_changes = {}
 no_session = BaseSession()
 
 
+class FieldsStore(type):
+
+    FIELDS_STORE = 'unbound_fields'
+
+    def __new__(mcs, name, bases, dct):
+        fields = dict(mcs.get_fields(dct))
+
+        for base in bases:
+            fields.update(base.__dict__.get(mcs.FIELDS_STORE, {}))
+
+        dct[mcs.FIELDS_STORE] = fields
+        return super(FieldsStore, mcs).__new__(mcs, name, bases, dct)
+
+    @classmethod
+    def get_fields(cls, dct):
+        for name, field in dct.iteritems():
+            if hasattr(field, '__unbound__'):
+                yield name, field
+
+
 class BaseModel(BaseBound):
+
+    __metaclass__ = FieldsStore
 
     defaults = False
     prefix = ''
@@ -36,14 +58,7 @@ class BaseModel(BaseBound):
 
         self._fields = []
         self.instance = inst
-        self.init_fields(self.fields_gen())
-
-    @classmethod
-    def fields_gen(cls):
-        for name in dir(cls):
-            field = getattr(cls, name)
-            if hasattr(field, '__unbound__'):
-                yield name, field
+        self.init_fields(self.unbound_fields.iteritems())
 
     def init_fields(self, fields):
         for name, field in fields:

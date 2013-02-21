@@ -62,9 +62,9 @@ class FieldsNestedTest(BaseTest):
 
     def test_fields(self):
         self.eq(len(self.gen._fields), 2)
-        nested_gen = self.gen._fields[0]
+        nested_gen = self.gen._fields[1]
         self.isinstance(nested_gen, self.gen.iter_class)
-        self.eq(self.gen._fields[1], self.model.some)
+        self.eq(self.gen._fields[0], self.model.some)
 
     def test_data(self):
         self.eq(self.gen.data(), {'nested': {'name': 'nick', 'uid': 1},
