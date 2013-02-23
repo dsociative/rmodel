@@ -20,6 +20,9 @@ class rhash(BaseField):
     def keys(self):
         return self.redis.hkeys(self.key)
 
+    def values(self):
+        return self.process_list(self.redis.hvals(self.key))
+
     def data(self):
         return self.process_result(self.collect_data(self.redis))
 
