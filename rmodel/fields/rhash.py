@@ -21,7 +21,7 @@ class rhash(BaseField):
         return self.redis.hkeys(self.key)
 
     def data(self):
-        return self.process(self.collect_data(self.redis))
+        return self.process_result(self.collect_data(self.redis))
 
     def collect_data(self, pipe):
         return pipe.hgetall(self.key)
@@ -43,10 +43,13 @@ class rhash(BaseField):
 
     def get(self, field):
         value = self.redis.hget(self.key, field)
-        return self.onload(field, self.process_result(value))
+        return self.onload(field, self.typer(value))
+
+    def mget(self, *fields):
+        return self.process_list(self.redis.hmget(self.key, *fields))
 
     def incr(self, field, value=1):
-        value = self.process_result(self.redis.hincrby(self.key, field, value))
+        value = self.typer(self.redis.hincrby(self.key, field, value))
         return self._field_changed(field, value)
 
     def set_dict(self, value):
@@ -71,14 +74,11 @@ class rhash(BaseField):
     def remove(self, field):
         return self.redis.hdel(self.key, field)
 
-    def process_result(self, values):
-        if type(values) is dict:
-            return self.process(values)
-        else:
-            return super(rhash, self).process_result(values)
+    def process_result(self, rt):
+        return self.process_dict(rt)
 
-    def process(self, rt):
+    def process_dict(self, rt):
         for key, value in rt.iteritems():
-            rt[key] = self.process_result(value)
+            rt[key] = self.typer(value)
         return rt
 

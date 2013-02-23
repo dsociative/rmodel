@@ -28,7 +28,7 @@ class rset(BaseField):
         """
         :returns: ['item1', 'item2']
         """
-        return [self.typer(i) for i in self.collect_data(self.redis)]
+        return self.process_list(self.collect_data(self.redis))
 
     def collect_data(self, pipe):
         return pipe.smembers(self.key)

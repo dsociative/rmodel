@@ -34,7 +34,7 @@ class rlist(BaseField):
                                     self.__push(values))
 
     def process_result(self, rt):
-        return [self.typer(i) for i in rt]
+        return self.process_list(rt)
 
     def __len__(self):
         return self.redis.llen(self.key)

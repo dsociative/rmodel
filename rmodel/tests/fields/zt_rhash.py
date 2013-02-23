@@ -37,6 +37,16 @@ class rhashTest(rhashBaseTest):
         self.eq(self.model.data(), {'hash': {}})
         self.eq(model2.data(), {'hash': {'1': 1}})
 
+    def test_get(self):
+        self.field.set('f', 1)
+        self.eq(self.field.get('f'), 1)
+
+    def test_mget(self):
+        self.field._default = None
+        self.eq(self.field.mget('f', 'none'), [None, None])
+        self.field.set('f', 50)
+        self.eq(self.field.mget('f', 'none'), [50, None])
+
     def test_contains(self):
         self.false('some_key' in self.model.hash)
         self.model.hash['some_key'] = None

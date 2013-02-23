@@ -37,6 +37,9 @@ class BaseField(BaseBound):
     def process_result(self, rt):
         return self.typer(rt)
 
+    def process_list(self, rt):
+        return [self.typer(i) for i in rt]
+
     @property
     def default(self):
         if not self._default is None:
