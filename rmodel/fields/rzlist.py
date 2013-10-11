@@ -6,6 +6,9 @@ class rzlist(BaseField):
 
     def __contains__(self, value):
         return self.score(value) is not None
+        
+    def __len__(self):
+        return self.redis.zcard(self.key)        
 
     def data(self):
         return self.collect_data(self.redis)
