@@ -5,6 +5,6 @@ python:
 services:
   - redis-server
 install:
-  - pip install . --use-mirrors
+  - pip install --process-dependency-links . --use-mirrors
 script:
   - make test
