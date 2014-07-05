@@ -206,3 +206,24 @@ class RUnitItemTest(BaseRStoreTest):
         session = RSession()
         models = list(self.model.store.models(session))
         self.eq(models[0]._session, session)
+
+    def test_mset(self):
+        session = RSession()
+        one, two = self.model.store.mset(['one', 'two'], session=session)
+
+        for model in one, two:
+            self.isinstance(model, object)
+            self.eq(model._session, session)
+
+        self.items_eq(self.model.store.keys(), ['1', 'one', 'two'])
+
+    def test_mget(self):
+        session = RSession()
+        self.model.store.mset(['one', 'two'])
+        self.items_eq(self.model.store.keys(), ['1', 'one', 'two'])
+
+        one, two = self.model.store.mget(['one', 'two'], session=session)
+
+        for model in one, two:
+            self.isinstance(model, object)
+            self.eq(model._session, session)

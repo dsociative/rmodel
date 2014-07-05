@@ -11,8 +11,11 @@ class RStore(BaseModel):
         super(RStore, self).__init__(*args, **kwargs)
         self._key_cursor = self.cursor.new(self.KEYS_PREFIX)
 
+    def _contains(self, redis, prefix):
+        return redis.sismember(self._key_cursor.key, prefix)
+
     def __contains__(self, prefix):
-        return self.redis.sismember(self._key_cursor.key, prefix)
+        return self._contains(self.redis, prefix)
 
     def __len__(self):
         return self.redis.scard(self._key_cursor.key)
@@ -46,7 +49,10 @@ class RStore(BaseModel):
                            redis=self.redis)
 
     def add_key(self, key):
-        self.redis.sadd(self._key_cursor.key, key)
+        self._add_key(self.redis, key)
+
+    def _add_key(self, redis, key):
+        redis.sadd(self._key_cursor.key, key)
 
     def incr_key(self):
         return self.redis.hincrby(self.cursor.key, self.INCR_KEY)
@@ -58,11 +64,39 @@ class RStore(BaseModel):
         if prefix in self:
             return self.init_model(prefix, session)
 
-    def set(self, prefix, args=(), session=None):
-        self.add_key(prefix)
+    def create_new_model(self, args, prefix, session):
         model = self.init_model(prefix, session=session)
         model.new(*args)
         return model
+
+    def set(self, prefix, args=(), session=None):
+        self.add_key(prefix)
+        return self.create_new_model(args, prefix, session)
+
+    def pipe(self, func, values):
+        p = self.redis.pipeline()
+        for value in values:
+            func(p, value)
+        return p.execute()
+
+    def mset_gen(self, prefixes, args=(), session=None):
+        self.pipe(self._add_key, prefixes)
+
+        for prefix in prefixes:
+            yield self.create_new_model(args, prefix, session)
+
+    def mset(self, prefixes, args=(), session=None):
+        return list(self.mset_gen(prefixes, args, session))
+
+    def mget_gen(self, prefixes, session=None):
+        for prefix, exist in zip(
+                prefixes, self.pipe(self._contains, prefixes)
+        ):
+            if exist:
+                yield self.init_model(prefix, session)
+
+    def mget(self, prefixes, session=None):
+        return list(self.mget_gen(prefixes, session))
 
     def remove_item(self, prefix):
         item = self.get(prefix)
