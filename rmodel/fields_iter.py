@@ -12,7 +12,7 @@ class FieldsIter(object):
         self._fields = list(self.get_fields())
 
     def get_fields(self):
-        for field in self.model.fields():
+        for field in self.model.get_fields():
             yield self.process_field(field)
 
     def process_field(self, field):

@@ -38,7 +38,7 @@ class BaseModel(BaseBound):
     prefix = ''
     ismodel = True
 
-    def fields(self):
+    def get_fields(self):
         raise NotImplementedError()
 
     def new(self):
@@ -68,11 +68,11 @@ class BaseModel(BaseBound):
         return FieldsIter(self).data()
 
     def collect_data(self, pipe):
-        for field in self.fields():
+        for field in self.get_fields():
             field.collect_data(pipe)
 
     def clean(self, pipe):
-        for field in self.fields():
+        for field in self.get_fields():
             field.clean(pipe)
 
     def typer(self, value):

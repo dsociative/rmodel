@@ -94,7 +94,7 @@ class RUnitTest(BaseTest):
 
     def test_nested_model(self):
         model = NestedModel(redis=self.redis)
-        self.assertEqual(len(model.fields()), 3)
+        self.assertEqual(len(model.get_fields()), 3)
         model.nested.store.set(1)
         self.assertEqual(model.nested.store.get(), 1)
         self.assertDictEqual(model.data(), {'nested': {'store': 1},

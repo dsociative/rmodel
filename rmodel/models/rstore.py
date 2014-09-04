@@ -30,7 +30,7 @@ class RStore(BaseModel):
         for key in self.keys():
             yield self.init_model(key, session)
 
-    def fields(self):
+    def get_fields(self):
         for model in self.models():
             yield model
         for field in self._fields:

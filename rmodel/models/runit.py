@@ -4,7 +4,7 @@ from rmodel.models.base_model import BaseModel
 
 class RUnit(BaseModel):
 
-    def fields(self):
+    def get_fields(self):
         return self._fields
 
     def incr(self, sect, key, val=1):
