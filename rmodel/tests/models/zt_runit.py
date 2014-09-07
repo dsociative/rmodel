@@ -63,7 +63,7 @@ class RUnitTest(BaseTest):
 
         incr_value = 13
 
-        model.incr_field += 11
+        model.incr('incr_field', 11)
         self.assertEqual(model.incr_field.get(), 1 + 13 + 11)
 
         model.incr_field.set(10)

@@ -78,6 +78,10 @@ class BaseModel(BaseBound):
     def typer(self, value):
         return value
 
+    def incr(self, name, value):
+        field = getattr(self, name)
+        field += value
+
     def remove(self):
         pipe = self.redis.pipeline()
         self.clean(pipe)
