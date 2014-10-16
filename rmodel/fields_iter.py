@@ -9,6 +9,8 @@ class FieldsIter(object):
         self.model = model
         self.prefix = model.prefix
 
+        self.redis = model.redis
+
         self._fields = list(self.get_fields())
 
     def get_fields(self):
@@ -22,7 +24,7 @@ class FieldsIter(object):
             return field
 
     def data(self):
-        pipe = self.model.redis.pipeline()
+        pipe = self.redis.pipeline()
         self.collect_data(pipe)
         return self.process_data(pipe.execute())
 
