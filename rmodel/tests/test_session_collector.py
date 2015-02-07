@@ -5,7 +5,6 @@ from redis import Redis
 from rmodel.fields.rfield import rfield
 from rmodel.models.runit import RUnit
 from rmodel.session_collector import SessionCollector
-from rmodel.sessions.rsession import RSession
 
 
 class TestModel(RUnit):
@@ -13,21 +12,6 @@ class TestModel(RUnit):
     root = True
     field1 = rfield()
     field2 = rfield()
-
-
-@pytest.fixture
-def redis():
-    return Redis()
-
-
-@pytest.fixture
-def model(redis):
-    return TestModel(redis)
-
-
-@pytest.fixture
-def session():
-    return RSession()
 
 
 def test_fields(model, session):

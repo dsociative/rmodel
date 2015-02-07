@@ -25,12 +25,12 @@ class FieldsStore(type):
 
     @classmethod
     def get_fields(cls, dct):
-        for name, field in dct.iteritems():
+        for name, field in dct.items():
             if hasattr(field, '__unbound__'):
                 yield name, field
 
 
-class BaseModel(BaseBound):
+class BaseModel(BaseBound, metaclass=FieldsStore):
 
     __metaclass__ = FieldsStore
 
@@ -58,7 +58,7 @@ class BaseModel(BaseBound):
 
         self._fields = []
         self.instance = inst
-        self.init_fields(self.unbound_fields.iteritems())
+        self.init_fields(self.unbound_fields.items())
 
     def init_fields(self, fields):
         for name, field in fields:

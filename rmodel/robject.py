@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-class RObject(object):
+class RObject:
 
     root = False
 

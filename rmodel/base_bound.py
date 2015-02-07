@@ -9,7 +9,7 @@ class BaseBound(RObject):
 
     def __new__(cls, *args, **kwargs):
         if cls.isinit(kwargs):
-            return super(BaseBound, cls).__new__(cls, *args, **kwargs)
+            return super(BaseBound, cls).__new__(cls)
         else:
             return Unbound(cls, *args, **kwargs)
 

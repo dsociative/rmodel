@@ -11,7 +11,8 @@ setup(
     packages=['rmodel', 'rmodel.fields', 'rmodel.models', 'rmodel.sessions'],
     package_dir={'rmodel': 'rmodel'},
     install_requires=[
-        'redis'
+        'redis',
+        'pytest'
     ],
     version='0.1.3'
 )
